@@ -6,7 +6,8 @@ public class gameMaster : MonoBehaviour
 {
 
     private static gameMaster _instance;
-    public Vector3 LastUsedDoorPosition;
+    public door LastUsedDoor;
+
 
     public static gameMaster instance
     {
