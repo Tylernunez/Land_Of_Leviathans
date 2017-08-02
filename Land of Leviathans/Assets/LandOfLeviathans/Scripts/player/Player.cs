@@ -7,23 +7,26 @@ public class Player : MonoBehaviour {
 
     public Vector3 playerPosition;
     public GameObject Body { get;set; }
-    public Vector3 startingPosition;
 
     // Use this for initialization
     void Start () {
-		if(gameMaster.instance.LastUsedDoor != null)
-        {
-            startingPosition == gameMaster.instance.LastUsedDoor.art.transform.position;
-        }
+		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+        playerPosition = this.transform.position;
 	}
-
-    public static explicit operator Player(GameObject v)
+    private void OnLevelWasLoaded(int level)
     {
-        throw new NotImplementedException();
+        if (gameMaster.instance.LastUsedDoor != null)
+        {
+            GameObject search = GameObject.Find(gameMaster.instance.EntryDoor);
+            door entry = search.GetComponent<door>();
+            this.transform.position = entry.spawnPoint.transform.position;
+            this.transform.rotation = entry.spawnPoint.transform.localRotation;
+        }
     }
+
+ 
 }

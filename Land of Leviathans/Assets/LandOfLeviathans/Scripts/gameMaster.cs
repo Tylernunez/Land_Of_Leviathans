@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class gameMaster : MonoBehaviour
 {
 
     private static gameMaster _instance;
-    public door LastUsedDoor;
-
+    public string LastUsedDoor;
+    public string EntryDoor;
 
     public static gameMaster instance
     {
@@ -40,5 +42,10 @@ public class gameMaster : MonoBehaviour
             if (this != _instance)
                 Destroy(this.gameObject);
         }
+    }
+    public void Load(string level)
+    {
+        AsyncOperation enterPortal = SceneManager.LoadSceneAsync(level);
+        
     }
 }

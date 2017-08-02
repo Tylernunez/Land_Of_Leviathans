@@ -8,9 +8,9 @@ public class door : MonoBehaviour {
     public string parentScene;
     public GameObject art;
     public string Partner;
-    GameObject selectedObject;
     public float grabRange = 5;
     public Collider other;
+    public GameObject spawnPoint;
 
     // Use this for initialization
     void Start () {
@@ -35,10 +35,10 @@ public class door : MonoBehaviour {
         }
         if (Vector3.Distance(transform.position, closestObject.transform.position) < grabRange)
         {
-
-            gameMaster.instance.LastUsedDoor = closestObject;
-
-            AsyncOperation enterPortal = SceneManager.LoadSceneAsync(closestObject.parentScene);
+            
+            gameMaster.instance.LastUsedDoor = closestObject.name;
+            gameMaster.instance.EntryDoor = closestObject.Partner;
+            gameMaster.instance.Load(closestObject.parentScene);
         }
 
     }
