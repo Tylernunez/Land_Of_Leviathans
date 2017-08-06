@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
             GameObject search = GameObject.Find(gameMaster.instance.EntryDoor);
             door entry = search.GetComponent<door>();
             this.transform.position = entry.spawnPoint.transform.position;
-            this.transform.rotation = entry.spawnPoint.transform.localRotation;
+            this.transform.rotation = entry.spawnPoint.transform.rotation;
         }
     }
 

@@ -8,7 +8,7 @@ public class door : MonoBehaviour {
     public string parentScene;
     public GameObject art;
     public string Partner;
-    public float grabRange = 5;
+    public float grabRange = 3.0f;
     public Collider other;
     public GameObject spawnPoint;
 
