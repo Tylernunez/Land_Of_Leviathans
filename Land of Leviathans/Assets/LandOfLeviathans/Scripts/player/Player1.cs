@@ -8,7 +8,7 @@ public class Player1 : MonoBehaviour
 
     public static Player1 instance = null;              //Static instance of GameManager which allows it to be accessed by any other script.
     public Player playerScript;                       //Store a reference to our BoardManager which will set up the level.                            
-
+    public PlayerMachine movement;
 
     //Awake is always called before any Start functions
     void Awake()
@@ -23,7 +23,9 @@ public class Player1 : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         playerScript = GetComponent<Player>();
-
+        movement = GetComponent<PlayerMachine>();
+        movement.WalkSpeed += playerScript.Agility;
+        movement.JumpHeight += playerScript.Agility;
     }
 
     //Update is called every frame.
