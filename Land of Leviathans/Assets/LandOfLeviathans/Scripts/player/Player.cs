@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+    Camera cam;
     public Vector3 playerPosition;
     public GameObject Body { get;set; }
     public String Name;
@@ -18,10 +19,11 @@ public class Player : MonoBehaviour {
     public int Intelligence;
     public int Wisdom;
     public int Charisma;
+    public Interactable focus;
 
     // Use this for initialization
     void Start () {
-		
+        cam = Camera.main;
 	}
     private void Awake()
     {
@@ -38,20 +40,67 @@ public class Player : MonoBehaviour {
         Wisdom = 3;
         Charisma = 3;
     }
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    void Update()
+    {
         playerPosition = this.transform.position;
+
+        
+
+        //if ray hits
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100))
+            {
+                Interactable interactable = hit.collider.GetComponent<Interactable>();
+                if (interactable != null)
+                {
+                    SetFocus(interactable);
+                }
+
+            }
+            else
+            {
+                RemoveFocus();
+            }
+        }
+        
 	}
     private void OnLevelWasLoaded(int level)
     {
         if (gameMaster.instance.LastUsedDoor != null)
         {
             GameObject search = GameObject.Find(gameMaster.instance.EntryDoor);
-            door entry = search.GetComponent<door>();
-            this.transform.position = entry.spawnPoint.transform.position;
-            this.transform.rotation = entry.spawnPoint.transform.rotation;
+            Transform spawn = search.transform.GetChild(0);
+            this.transform.position = spawn.transform.position;
+            Transform graphic = this.transform.GetChild(0);
+            this.transform.RotateAround(spawn.transform.position,Vector3.up,0.0f);
+            
+            RemoveFocus();
         }
     }
-
+    void SetFocus(Interactable newFocus)
+    {
+        if(newFocus != focus)
+        {
+            if(focus != null)
+            {
+                focus.OnDefocused();
+            }
+            
+            focus = newFocus;
+        }
+        newFocus.OnFocused(transform);
+    }
+    void RemoveFocus()
+    {
+        if (focus != null)
+        {
+            focus.OnDefocused();
+        }
+        focus = null; 
+    }
  
 }
