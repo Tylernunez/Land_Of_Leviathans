@@ -94,4 +94,9 @@ public class gameMaster : MonoBehaviour
 
         SetCursorState();
     }
+
+    public void ChangeToScene(string sceneToChangeTo)
+    {
+        SceneManager.LoadScene(sceneToChangeTo);
+    }
 }
