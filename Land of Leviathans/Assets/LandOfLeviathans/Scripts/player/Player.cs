@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player : Photon.MonoBehaviour {
 
+    private PhotonView PhotonView;
     Camera cam;
     public Vector3 playerPosition;
     public GameObject Body { get;set; }
@@ -23,7 +24,7 @@ public class Player : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        cam = Camera.main;
+        cam = GetComponentInChildren<Camera>();
 	}
     private void Awake()
     {
@@ -39,14 +40,13 @@ public class Player : MonoBehaviour {
         Intelligence = 3;
         Wisdom = 3;
         Charisma = 3;
+
+        PhotonView = GetComponent<PhotonView>();
     }
     // Update is called once per frame
     void Update()
     {
         playerPosition = this.transform.position;
-
-        
-
         //if ray hits
         if (Input.GetKeyDown(KeyCode.E))
         {
