@@ -6,6 +6,15 @@ public class InputHandler : MonoBehaviour {
 
     float vertical;
     float horizontal;
+    bool b_input;
+    bool a_input;
+    bool x_input;
+    bool y_input;
+
+    bool rb_input;
+    float rt_input;
+    bool lb_input;
+    float lt_input;
 
     StateManager states;
     CameraManager camManager;
@@ -28,19 +37,22 @@ public class InputHandler : MonoBehaviour {
         GetInput();
         UpdateStates();
         states.FixedTick(delta);
+        camManager.Tick(delta);
 
     }
 
     private void Update()
     {
- 
-        camManager.Tick(delta);
+        delta = Time.deltaTime;
+        states.Tick(delta);
+        
     }
 
     void GetInput()
     {
         vertical = Input.GetAxis("Vertical");
         horizontal = Input.GetAxis("Horizontal");
+        b_input = Input.GetButton("b_input");
     }
 
     void UpdateStates()
@@ -54,6 +66,13 @@ public class InputHandler : MonoBehaviour {
         float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
         states.moveAmount = Mathf.Clamp01(m);
 
-        
+        if(b_input)
+        {
+            states.run = (states.moveAmount > 0);
+        }
+        else
+        {
+            states.run = false;
+        }
     }
 }

@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : Photon.MonoBehaviour {
+public class Player : MonoBehaviour {
 
-    private PhotonView PhotonView;
     Camera cam;
     public Vector3 playerPosition;
     public GameObject Body { get;set; }
@@ -40,8 +39,6 @@ public class Player : Photon.MonoBehaviour {
         Intelligence = 3;
         Wisdom = 3;
         Charisma = 3;
-
-        PhotonView = GetComponent<PhotonView>();
     }
     // Update is called once per frame
     void Update()
