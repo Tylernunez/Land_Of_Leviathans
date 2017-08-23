@@ -32,7 +32,7 @@ public class InputHandler : MonoBehaviour {
         states.Init();
 
         camManager = CameraManager.singleton;
-        camManager.Init(this.transform);
+        camManager.Init(states);
 	}
 	
 	// Update is called once per frame
@@ -91,13 +91,16 @@ public class InputHandler : MonoBehaviour {
         float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
         states.moveAmount = Mathf.Clamp01(m);
 
+
+        states.rollInput = b_input;
+
         if(b_input)
         {
-            states.run = (states.moveAmount > 0);
+            //states.run = (states.moveAmount > 0);
         }
         else
         {
-            states.run = false;
+            //states.run = false;
         }
         states.rt = rt_input;
         states.lt = lt_input;
@@ -118,7 +121,9 @@ public class InputHandler : MonoBehaviour {
             {
                 states.lockOn = false;              
             }
-            camManager.lockonTarget = states.lockOnTarget.transform;
+
+            camManager.lockonTarget = states.lockOnTarget;
+            states.lockOnTransform = camManager.lockonTransform;
             camManager.lockon = states.lockOn;
         }
     }
