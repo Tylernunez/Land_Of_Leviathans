@@ -12,6 +12,7 @@ public class CameraManager : MonoBehaviour {
     public float controllerSpeed = 7;
 
     public Transform target;
+    public Transform lockonTarget;
 
     [HideInInspector]
     public Transform pivot;
@@ -87,16 +88,31 @@ public class CameraManager : MonoBehaviour {
             smoothX = h;
             smoothY = v;
         }
-        if (lockon)
-        {
 
-        }
-
-        lookAngle += smoothX * targetSpeed;
-        transform.rotation = Quaternion.Euler(0, lookAngle, 0);
 
         tiltAngle -= smoothY * targetSpeed;
         tiltAngle = Mathf.Clamp(tiltAngle, minAngle, maxAngle);
         pivot.localRotation = Quaternion.Euler(tiltAngle, 0, 0);
+        lookAngle += smoothX * targetSpeed;
+        if (lockon && lockonTarget != null)
+        {
+            Vector3 targetDir = lockonTarget.position - transform.position;
+            targetDir.Normalize();
+            //targetDir.y = 0;
+
+            if(targetDir == Vector3.zero)
+            {
+                targetDir = transform.forward;
+
+            }
+            Quaternion targetRot = Quaternion.LookRotation(targetDir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, d * 9);
+
+            return;
+        }
+
+
+        transform.rotation = Quaternion.Euler(0, lookAngle, 0);
+
     }
 }

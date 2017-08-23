@@ -12,6 +12,8 @@ public class StateManager : MonoBehaviour {
     public float horizontal;
     public float moveAmount;
     public Vector3 moveDir;
+    public bool rt, rb, lt, lb;
+
     [Header("Stats")]
     public float moveSpeed = 2;
     public float runSpeed = 3.5f;
@@ -22,16 +24,27 @@ public class StateManager : MonoBehaviour {
     public bool run;
     public bool onGround;
     public bool lockOn;
+    public bool inAction;
+    public bool canMove;
+    public bool isTwoHanded;
+
+
+    [Header("Other")]
+    public EnemyTarget lockOnTarget;
+
 
     [HideInInspector]
     public Animator anim;
     [HideInInspector]
     public Rigidbody rigid;
-
+    [HideInInspector]
+    public AnimatorHook a_hook;
     [HideInInspector]
     public float delta;
     [HideInInspector]
     public LayerMask ignoreLayers;
+
+    float _actionDelay;
 
     public void Init()
     {
@@ -41,6 +54,9 @@ public class StateManager : MonoBehaviour {
         rigid.drag = 4;
         rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
+        a_hook = activeModel.AddComponent<AnimatorHook>();
+        a_hook.Init(this);
+        
         ignoreLayers = ~(1 << 9);
 
         anim.SetBool("onGround", true);
@@ -76,6 +92,33 @@ public class StateManager : MonoBehaviour {
     {
         delta = d;
 
+        DetectAction();
+
+        if (inAction)
+        {
+            anim.applyRootMotion = true;
+
+            _actionDelay += delta;
+            if(_actionDelay > .3f)
+            {
+                inAction = false;
+                _actionDelay = 0;
+            }else
+            {
+                return;
+            }
+            
+        }
+           
+        canMove = anim.GetBool("canMove");
+
+        if (!canMove)
+        {
+            return;
+        }
+
+        anim.applyRootMotion = false;
+
         rigid.drag = (moveAmount > 0 || onGround == false) ? 0 : 4;
 
         float targetSpeed = moveSpeed;
@@ -110,6 +153,44 @@ public class StateManager : MonoBehaviour {
         HandleMovementAnimations();
     }
 
+    public void DetectAction()
+    {
+        if(canMove == false)
+        {
+            return;
+        }
+
+        if (rb == false && rt == false && lt == false && lb == false)
+        {
+            return;
+        }
+        string targetAnim = null;
+        if (rb)
+        {
+            targetAnim = "oh_attack_1";
+        }
+        if (rt)
+        {
+            targetAnim = "oh_attack_2";
+        }
+        if (lt)
+        {
+            targetAnim = "oh_attack_3";
+        }
+        if (lb)
+        {
+            targetAnim = "th_attack_1";
+        }
+        if (string.IsNullOrEmpty(targetAnim))
+            return;
+
+        canMove = false;
+        inAction = true;
+        anim.CrossFade(targetAnim,0.1f);
+        rigid.velocity = Vector3.zero;
+        
+    }
+
     public void Tick(float d)
     {
         delta = d;
@@ -122,6 +203,7 @@ public class StateManager : MonoBehaviour {
         anim.SetBool("run", run);
         anim.SetFloat("vertical", moveAmount,0.4f,delta);
     }
+
     public bool OnGround() {
 
         bool r = false;
@@ -140,5 +222,10 @@ public class StateManager : MonoBehaviour {
 
 
         return r;
+    }
+
+    public void HandleTwoHanded()
+    {
+        anim.SetBool("two_Handed", isTwoHanded);
     }
 }
