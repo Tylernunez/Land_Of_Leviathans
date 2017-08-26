@@ -14,6 +14,7 @@ public class StateManager : MonoBehaviour {
     public Vector3 moveDir;
     public bool rt, rb, lt, lb;
     public bool rollInput;
+    public bool itemInput;
 
     [Header("Stats")]
     public float moveSpeed = 2;
@@ -29,6 +30,7 @@ public class StateManager : MonoBehaviour {
     public bool inAction;
     public bool canMove;
     public bool isTwoHanded;
+    public bool usingItem;
 
 
 
@@ -45,6 +47,10 @@ public class StateManager : MonoBehaviour {
     [HideInInspector]
     public AnimatorHook a_hook;
     [HideInInspector]
+    public ActionManager actionManager;
+    [HideInInspector]
+    public InventoryManager inventoryManager;
+    [HideInInspector]
     public float delta;
     [HideInInspector]
     public LayerMask ignoreLayers;
@@ -59,15 +65,25 @@ public class StateManager : MonoBehaviour {
         rigid.drag = 4;
         rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-        a_hook = activeModel.AddComponent<AnimatorHook>();
-        a_hook.Init(this);
+        inventoryManager = GetComponent<InventoryManager>();
+        inventoryManager.Init();
 
+        actionManager = GetComponent<ActionManager>();
+        actionManager.Init(this);
+
+        a_hook = activeModel.GetComponent<AnimatorHook>();
+        if(a_hook == null)
+        {
+            a_hook = activeModel.GetComponent<AnimatorHook>();
+        }
+
+        a_hook.Init(this, null);
+
+        gameObject.layer = 8;
         ignoreLayers = ~(1 << 9);
 
         anim.SetBool("onGround", true);
     }
-
-
 
     void SetupAnimator()
     {
@@ -97,7 +113,10 @@ public class StateManager : MonoBehaviour {
     {
         delta = d;
 
+        usingItem = anim.GetBool("interacting");
+        DetectItemAction();
         DetectAction();
+        inventoryManager.curWeapon.weaponModel.SetActive(!usingItem);
 
         if (inAction)
         {
@@ -132,6 +151,12 @@ public class StateManager : MonoBehaviour {
         rigid.drag = (moveAmount > 0 || onGround == false) ? 0 : 4;
 
         float targetSpeed = moveSpeed;
+
+        if (usingItem)
+        {
+            run = false;
+            moveAmount = Mathf.Clamp(moveAmount, 0, 0.5f);
+        }
 
         if (run)
         {
@@ -177,9 +202,32 @@ public class StateManager : MonoBehaviour {
         
     }
 
+    public void DetectItemAction()
+    {
+        if (canMove == false || usingItem)
+        {
+            return;
+        }
+        if (itemInput == false)
+        {
+            return;
+        }
+
+        ItemAction slot = actionManager.consumableItem;
+        string targetAnim = slot.targetAnim;
+
+        if (string.IsNullOrEmpty(targetAnim))
+        {
+            return;
+        }
+
+        usingItem = true;
+        anim.Play(targetAnim);
+    }
+
     public void DetectAction()
     {
-        if (canMove == false)
+        if (canMove == false || usingItem)
         {
             return;
         }
@@ -189,28 +237,20 @@ public class StateManager : MonoBehaviour {
             return;
         }
         string targetAnim = null;
-        if (rb)
+
+        Action slot = actionManager.GetActionSlot(this);
+        if(slot == null)
         {
-            targetAnim = "oh_attack_1";
+            return;
         }
-        if (rt)
-        {
-            targetAnim = "oh_attack_2";
-        }
-        if (lt)
-        {
-            targetAnim = "oh_attack_3";
-        }
-        if (lb)
-        {
-            targetAnim = "th_attack_1";
-        }
+        targetAnim = slot.targetAnim;
+
         if (string.IsNullOrEmpty(targetAnim))
             return;
 
         canMove = false;
         inAction = true;
-        anim.CrossFade(targetAnim, 0.1f);
+        anim.CrossFade(targetAnim, 0.3f);
         //rigid.velocity = Vector3.zero;
 
     }
@@ -224,7 +264,7 @@ public class StateManager : MonoBehaviour {
 
     void HandleRolls()
     {
-        if (!rollInput)
+        if (!rollInput || usingItem)
         {
             return;
         }
@@ -318,5 +358,14 @@ public class StateManager : MonoBehaviour {
     public void HandleTwoHanded()
     {
         anim.SetBool("two_Handed", isTwoHanded);
+
+        if (isTwoHanded)
+        {
+            actionManager.UpdateActionsTwoHanded();
+
+        }else
+        {
+            actionManager.UpdateActionsOneHanded();
+        }
     }
 }

@@ -47,7 +47,7 @@ public class InputHandler : MonoBehaviour {
         UpdateStates();
         states.FixedTick(delta);
         camManager.Tick(delta);
-
+        ResetInputNStates();
 
 
     }
@@ -56,7 +56,7 @@ public class InputHandler : MonoBehaviour {
     {
         delta = Time.deltaTime;
         states.Tick(delta);
-        ResetInutNStates();
+       
     }
 
     void GetInput()
@@ -102,17 +102,22 @@ public class InputHandler : MonoBehaviour {
         float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
         states.moveAmount = Mathf.Clamp01(m);
 
+        if (x_input)
+        {
+            b_input = false;
+        }
 
-        states.rollInput = b_input;
 
         if(b_input && b_timer > .5f)
         {
             states.run = (states.moveAmount > 0);
         }
-        else
+        if(b_input == false && b_timer > 0 && b_timer < 0.5f)
         {
-            states.run = false;
+            states.rollInput = true;
         }
+
+        states.itemInput = x_input;
         states.rt = rt_input;
         states.lt = lt_input;
         states.rb = rb_input;
@@ -124,6 +129,17 @@ public class InputHandler : MonoBehaviour {
             states.HandleTwoHanded();
         }
 
+        if(states.lockOnTarget != null)
+        {
+            if (states.lockOnTarget.eStates.isDead)
+            {
+                states.lockOn = false;
+                states.lockOnTarget = null;
+                states.lockOnTransform = null;
+                camManager.lockon = false;
+                camManager.lockonTarget = null;
+            }
+        }
         if (rightAxis_down)
         {
             states.lockOn = !states.lockOn;
@@ -132,6 +148,7 @@ public class InputHandler : MonoBehaviour {
             {
                 states.lockOn = false;              
             }
+            
 
             camManager.lockonTarget = states.lockOnTarget;
             states.lockOnTransform = camManager.lockonTransform;
@@ -139,7 +156,7 @@ public class InputHandler : MonoBehaviour {
         }
     }
 
-    void ResetInutNStates()
+    void ResetInputNStates()
     {
         if (!b_input)
         {
