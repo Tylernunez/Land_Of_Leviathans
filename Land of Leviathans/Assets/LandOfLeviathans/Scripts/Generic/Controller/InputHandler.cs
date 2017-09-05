@@ -25,6 +25,8 @@ public class InputHandler : MonoBehaviour {
     float rt_timer;
     float lt_timer;
 
+
+
     StateManager states;
     CameraManager camManager;
 
@@ -61,29 +63,28 @@ public class InputHandler : MonoBehaviour {
 
     void GetInput()
     {
-        vertical = Input.GetAxis("Vertical");
-        horizontal = Input.GetAxis("Horizontal");
-        b_input = Input.GetButton("B");
-        a_input = Input.GetButton("A");
-        y_input = Input.GetButtonUp("Y");
-        x_input = Input.GetButton("X");
-        rt_input = Input.GetButton("RT");
-        rt_axis = Input.GetAxis("RT");
+        vertical = Input.GetAxis(StaticStrings.Vertical);
+        horizontal = Input.GetAxis(StaticStrings.Horizontal);
+        b_input = Input.GetButton(StaticStrings.B);
+        a_input = Input.GetButton(StaticStrings.A);
+        y_input = Input.GetButtonUp(StaticStrings.Y);
+        x_input = Input.GetButton(StaticStrings.X);
+        rt_input = Input.GetButton(StaticStrings.RT);
+        rt_axis = Input.GetAxis(StaticStrings.RT);
         if(rt_axis != 0)
         {
             rt_input = true;
         }
-        lt_input = Input.GetButton("LT");
-        lt_axis = Input.GetAxis("LT");
+        lt_input = Input.GetButton(StaticStrings.LT);
+        lt_axis = Input.GetAxis(StaticStrings.LT);
         if(lt_axis != 0)
         {
             lt_input = true;
-            
         }
-        rb_input = Input.GetButton("RB");
-        lb_input = Input.GetButton("LB");
+        rb_input = Input.GetButton(StaticStrings.RB);
+        lb_input = Input.GetButton(StaticStrings.LB);
 
-        rightAxis_down = Input.GetButtonUp("L");
+        rightAxis_down = Input.GetButtonUp(StaticStrings.L) || Input.GetKeyUp(KeyCode.T);
 
         if (b_input)
         {
@@ -139,18 +140,28 @@ public class InputHandler : MonoBehaviour {
                 camManager.lockon = false;
                 camManager.lockonTarget = null;
             }
+        }else
+        {
+            states.lockOn = false;
+            states.lockOnTarget = null;
+            states.lockOnTransform = null;
+            camManager.lockon = false;
+            camManager.lockonTarget = null;
         }
         if (rightAxis_down)
         {
             states.lockOn = !states.lockOn;
 
-            if (states.lockOnTarget == null)
+            states.lockOnTarget = EnemyManager.singleton.GetEnemy(transform.position);
+            if(states.lockOnTarget == null)
             {
-                states.lockOn = false;              
+
+                states.lockOn = false;    
             }
-            
 
             camManager.lockonTarget = states.lockOnTarget;
+            states.lockOnTransform = states.lockOnTarget.GetTarget();
+            camManager.lockonTransform = states.lockOnTransform;
             states.lockOnTransform = camManager.lockonTransform;
             camManager.lockon = states.lockOn;
         }

@@ -20,26 +20,54 @@ public class ActionManager : MonoBehaviour
     public void UpdateActionsOneHanded()
     {
         EmptyAllSlots();
-        Weapon w = states.inventoryManager.curWeapon;
 
-        for (int i = 0; i < w.actions.Count; i++)
+        DeepCopyAction(states.inventoryManager.rightHandWeapon, ActionInput.rb, ActionInput.rb);
+        DeepCopyAction(states.inventoryManager.rightHandWeapon, ActionInput.rt, ActionInput.rt);
+
+        if (states.inventoryManager.hasLeftHandWeapon)
         {
-            Action a = GetAction(w.actions[i].input);
-            a.targetAnim = w.actions[i].targetAnim;
-
+            DeepCopyAction(states.inventoryManager.leftHandWeapon, ActionInput.rb, ActionInput.lb, true);
+            DeepCopyAction(states.inventoryManager.leftHandWeapon, ActionInput.rt, ActionInput.lt, true);
         }
+        else
+        {
+            DeepCopyAction(states.inventoryManager.rightHandWeapon, ActionInput.lb, ActionInput.lb);
+            DeepCopyAction(states.inventoryManager.rightHandWeapon, ActionInput.lt, ActionInput.lt);
+        }
+    }
+
+    public void DeepCopyAction(Weapon w, ActionInput inp, ActionInput assign, bool isLeftHand = false)
+    {
+        Action a = GetAction(assign);
+        Action w_a = w.GetAction(w.actions,inp);
+        if(w_a == null)
+        {
+            return;
+        }
+        a.targetAnim = w_a.targetAnim;
+        a.type = w_a.type;
+        a.canBeParried = w_a.canBeParried;
+        a.changeSpeed = w_a.changeSpeed;
+        a.animSpeed = w_a.animSpeed;
+        a.canBackStab = w_a.canBackStab;
+
+        if (isLeftHand)
+        {
+            a.mirror = true;
+        }
+
     }
 
     public void UpdateActionsTwoHanded()
     {
         EmptyAllSlots();
-        Weapon w = states.inventoryManager.curWeapon;
+        Weapon w = states.inventoryManager.rightHandWeapon;
 
         for (int i = 0; i < w.two_handedActions.Count; i++)
         {
             Action a = GetAction(w.two_handedActions[i].input);
             a.targetAnim = w.two_handedActions[i].targetAnim;
-
+            a.type = w.two_handedActions[i].type;
         }
 
     }
@@ -50,6 +78,8 @@ public class ActionManager : MonoBehaviour
         {
             Action a = GetAction((ActionInput)i);
             a.targetAnim = null;
+            a.mirror = false;
+            a.type = ActionType.attack;
         }
     }
 
@@ -112,12 +142,23 @@ public enum ActionInput
 {
     rb,lb,rt,lt
 }
+
+public enum ActionType
+{
+    attack,block,spells,parry
+}
     
 [System.Serializable]
 public class Action
 {
     public ActionInput input;
+    public ActionType type;
     public string targetAnim;
+    public bool mirror = false;
+    public bool canBeParried = true;
+    public bool changeSpeed = false;
+    public float animSpeed = 1;
+    public bool canBackStab = false;
 }
 [System.Serializable]
 public class ItemAction

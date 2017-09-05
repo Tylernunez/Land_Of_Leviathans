@@ -121,20 +121,66 @@ public class AnimatorHook : MonoBehaviour {
 
     public void OpenDamageColliders()
     {
+        if(states)
+        {
+            states.inventoryManager.OpenAllDamageColliders();
+        }
+
+        OpenParryFlag();
+    }
+
+    public void CloseDamageColliders()
+    {
+        if (states)
+        {
+            states.inventoryManager.CloseAllDamageColliders();
+        }
+        CloseParryFlag();
+    }
+
+    public void OpenParryCollider()
+    {
         if(states == null)
         {
             return;
         }
-        states.inventoryManager.curWeapon.w_hook.OpenDamageColliders();
+        states.inventoryManager.OpenParryCollider();
     }
 
-    public void CloseDamageColliders()
+    public void CloseParryCollider()
     {
         if (states == null)
         {
             return;
         }
-        states.inventoryManager.curWeapon.w_hook.CloseDamageColliders();
+
+        states.inventoryManager.CloseParryCollider();
+    }
+
+    public void OpenParryFlag()
+    {
+        if (states)
+        {
+            states.parryIsOn = true;
+
+        }
+        if (eStates)
+        {
+            eStates.parryIsOn = true;
+        }
+    }
+
+    public void CloseParryFlag()
+    {
+        if (states)
+        {
+            states.parryIsOn = false;
+
+        }
+        if (eStates)
+        {
+            eStates.parryIsOn = false;
+        }
     }
 
 }

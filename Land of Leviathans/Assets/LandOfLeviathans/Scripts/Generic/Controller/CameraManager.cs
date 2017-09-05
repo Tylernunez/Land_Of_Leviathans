@@ -34,6 +34,9 @@ public class CameraManager : MonoBehaviour {
 
     bool usedRightAxis;
 
+    bool changeTargetLeft;
+    bool changeTargetRight;
+
     public void Init(StateManager st)
     {
         states = st;
@@ -47,7 +50,7 @@ public class CameraManager : MonoBehaviour {
     {
         if(singleton != null)
         {
-            //kill
+            Destroy(this.gameObject);
         }
 
         singleton = this;
@@ -63,6 +66,12 @@ public class CameraManager : MonoBehaviour {
 
         float targetSpeed = mouseSpeed;
 
+        //Mouse+Keyboard Controls
+
+        changeTargetLeft = Input.GetKeyUp(KeyCode.V);
+        changeTargetRight = Input.GetKeyUp(KeyCode.B);
+
+        //Change Lock on targets
         if(lockonTarget != null)
         {
             if (lockonTransform == null)
@@ -80,6 +89,11 @@ public class CameraManager : MonoBehaviour {
                     usedRightAxis = true;
                 }
 
+            }
+            if(changeTargetLeft || changeTargetRight)
+            {
+                lockonTransform = lockonTarget.GetTarget(changeTargetLeft);
+                states.lockOnTransform = lockonTransform;
             }
         }
 
