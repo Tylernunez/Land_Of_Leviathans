@@ -7,6 +7,11 @@ public class StateManager : MonoBehaviour {
     [Header("Init")]
     public GameObject activeModel;
 
+    [Header("Stats")]
+    public Attributes attributes;
+    public CharacterStats characterStats;
+
+
     [Header("Inputs")]
     public float vertical;
     public float horizontal;
@@ -16,7 +21,7 @@ public class StateManager : MonoBehaviour {
     public bool rollInput;
     public bool itemInput;
 
-    [Header("Stats")]
+    [Header("MovementStats")]
     public float moveSpeed = 2;
     public float runSpeed = 3.5f;
     public float rotateSpeed = 5;
@@ -58,6 +63,9 @@ public class StateManager : MonoBehaviour {
     public float delta;
     [HideInInspector]
     public LayerMask ignoreLayers;
+
+    [HideInInspector]
+    public Action currentAction;
 
     float _actionDelay;
 
@@ -273,6 +281,7 @@ public class StateManager : MonoBehaviour {
 
     void AttackAction(Action slot)
     {
+
         if (CheckForParry(slot))
         {
             return;
@@ -283,6 +292,7 @@ public class StateManager : MonoBehaviour {
             return;
         }
 
+        currentAction = slot;
         string targetAnim = null;
         targetAnim = slot.targetAnim;
 

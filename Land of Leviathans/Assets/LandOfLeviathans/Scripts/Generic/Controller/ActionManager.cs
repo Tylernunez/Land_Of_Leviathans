@@ -55,7 +55,19 @@ public class ActionManager : MonoBehaviour
         {
             a.mirror = true;
         }
+        DeepCopyWeaponStats(w_a.weaponStats, a.weaponStats);
+    }
 
+    public void DeepCopyWeaponStats(WeaponStats from, WeaponStats to)
+    {
+        to.physical = from.physical;
+        to.slash = from.slash;
+        to.strike = from.strike;
+        to.thrust = from.thrust;
+        to.magic = from.magic;
+        to.lightning = from.lightning;
+        to.fire = from.fire;
+        to.dark = from.dark;
     }
 
     public void UpdateActionsTwoHanded()
@@ -136,6 +148,11 @@ public class ActionManager : MonoBehaviour
 
     }
 
+    public bool isLeftHandSlot(Action slot)
+    {
+        return (slot.input == ActionInput.lb || slot.input == ActionInput.lt);
+    }
+
 }
 
 public enum ActionInput
@@ -159,6 +176,11 @@ public class Action
     public bool changeSpeed = false;
     public float animSpeed = 1;
     public bool canBackStab = false;
+
+    public bool ovverideDamageAnim;
+    public string damageAnim;
+
+    public WeaponStats weaponStats;
 }
 [System.Serializable]
 public class ItemAction

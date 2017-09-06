@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class EnemyStates : MonoBehaviour {
 
+    public CharacterStats characterStats;
     public bool isInvincible;
-    public float health;
+    public int health;
     public bool canMove;
     public bool isDead;
     public bool canBeParried = true;
@@ -20,6 +21,7 @@ public class EnemyStates : MonoBehaviour {
     public AnimatorHook a_hook;
     public Rigidbody rigid;
     public float delta;
+    public float poiseDegrade = 2;
 
     List<Rigidbody> ragdollRigids = new List<Rigidbody>();
     List<Collider> ragdollColliders = new List<Collider>();
@@ -29,7 +31,7 @@ public class EnemyStates : MonoBehaviour {
     public void Start()
     {
 
-        health = 100;
+        health = 100000;
         anim = GetComponentInChildren<Animator>();
         enTarget = GetComponent<EnemyTarget>();
         enTarget.Init(this);
@@ -138,6 +140,12 @@ public class EnemyStates : MonoBehaviour {
             }
         }
 
+        characterStats.poise -= delta * poiseDegrade;
+        if(characterStats.poise < 0)
+        {
+            characterStats.poise = 0;
+        }
+
     }
 
     void DoAction()
@@ -147,20 +155,40 @@ public class EnemyStates : MonoBehaviour {
         anim.SetBool(StaticStrings.canMove, false);
     }
 
-    public void DoDamage(float v)
+    public void DoDamage(Action a)
     {
         if (isInvincible)
         {
             return;
         }
-        else
+
+        int damage = StatsCalculations.CalculateBaseDamage(a.weaponStats, characterStats);
+
+        characterStats.poise += damage;
+
+        health -= damage;
+
+        if (canMove || characterStats.poise > 100)
         {
-            health -= v;
-            isInvincible = true;
-            anim.Play("damage_1");
-            anim.applyRootMotion = true;
-            anim.SetBool(StaticStrings.canMove, false);
+            if (a.ovverideDamageAnim)
+            {
+                anim.Play(a.damageAnim);
+
+            }
+            else
+            {
+                int rand = Random.Range(0, 100);
+                string tA = (rand > 50) ? StaticStrings.damage1 : StaticStrings.damage2;
+                anim.Play(tA);
+            }
         }
+
+        Debug.Log("Damage is " + damage + "Poise is " + characterStats.poise);
+        
+        isInvincible = true;
+        anim.applyRootMotion = true;
+        anim.SetBool(StaticStrings.canMove, false);
+  
     }
 
     public void CheckForParry(Transform target, StateManager states)
