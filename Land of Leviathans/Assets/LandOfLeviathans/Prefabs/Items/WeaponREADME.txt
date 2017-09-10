@@ -1,0 +1,1 @@
+Place the Weapon model under the correct hand with the Weapon Hook script attached to the model, then put the Damage Collider Script on an empty object under the weapon. Then make a prefab, boom/
