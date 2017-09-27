@@ -657,7 +657,6 @@ namespace SA
     [System.Serializable]
     public class Weapon : Item
     {
-        public string item_id;
         public string oh_idle;
         public string th_idle;
         public List<Action> actions;
@@ -717,7 +716,6 @@ namespace SA
     [System.Serializable]
     public class Consumable : Item
     {
-        public string item_id;
         public string consumableEffect;
         public string targetAnim;
         public GameObject itemPrefab;

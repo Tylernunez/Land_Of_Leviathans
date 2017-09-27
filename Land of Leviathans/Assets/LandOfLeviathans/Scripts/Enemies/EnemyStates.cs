@@ -1,48 +1,83 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+
 
 namespace SA
 {
     public class EnemyStates : MonoBehaviour
     {
+        [Header("Stats")]
         public int health;
+        public float poiseDegrade = 2;
+        public float airTimer;
+       
+
+        [Header("Values")]
+        public float delta;
+        public float horizontal;
+        public float vertical;
 
         public CharacterStats characterStats;
 
+        AIAttacks curAttack;
+        public void SetCurAttack(AIAttacks a)
+        {
+            curAttack = a;
+        }
+
+        public AIAttacks GetCurAttack()
+        {
+            return curAttack;
+        }
+
+        public GameObject[] defaultDamageColliders;
+
+        [Header("States")]
         public bool canBeParried = true;
         public bool parryIsOn = true;
-        //public bool doParry = false;
+    //    public bool doParry = false;
         public bool isInvicible;
         public bool dontDoAnything;
         public bool canMove;
         public bool isDead;
+        public bool hasDestination;
+        public Vector3 targetDestination;
+        public Vector3 dirToTarget;
+        public bool rotateToTarget;
+
 
         public StateManager parriedBy;
 
+        //References
         public Animator anim;
         EnemyTarget enTarget;
         AnimatorHook a_hook;
         public Rigidbody rigid;
-        public float delta;
-        public float poiseDegrade = 2;
+        public NavMeshAgent agent;
+        
+        public LayerMask ignoreLayers;
 
         List<Rigidbody> ragdollRigids = new List<Rigidbody>();
         List<Collider> ragdollColliders = new List<Collider>();
 
-        float timer;
-
         public delegate void SpellEffect_Loop();
         public SpellEffect_Loop spellEffect_loop;
 
-        void Start()
+
+        float timer;
+
+        public void Init()
         {
-            health = 100000;
+            health = 100;
             anim = GetComponentInChildren<Animator>();
             enTarget = GetComponent<EnemyTarget>();
             enTarget.Init(this);
 
             rigid = GetComponent<Rigidbody>();
+            agent = GetComponent<NavMeshAgent>();
+            rigid.isKinematic = true;
 
             a_hook = anim.GetComponent<AnimatorHook>();
             if (a_hook == null)
@@ -51,6 +86,9 @@ namespace SA
 
             InitRagdoll();
             parryIsOn = false;
+            ignoreLayers = ~(1 << 9);
+
+            EnemyManager.singleton.enemyTargets.Add(transform.GetComponent<EnemyTarget>());
         }
 
         void InitRagdoll()
@@ -61,6 +99,7 @@ namespace SA
                 if (rigs[i] == rigid)
                     continue;
 
+                rigs[i].gameObject.layer = 10;
                 ragdollRigids.Add(rigs[i]);
                 rigs[i].isKinematic = true;
 
@@ -94,21 +133,23 @@ namespace SA
             this.enabled = false;
         }
 
-        void Update()
+        public void Tick(float d)
         {
-            delta = Time.deltaTime;
-            canMove = anim.GetBool(StaticStrings.canMove);
-            
-            if(spellEffect_loop != null)
-            {
+            delta = d;         
+            canMove = anim.GetBool(StaticStrings.onEmpty);
+
+            if (spellEffect_loop != null)
                 spellEffect_loop();
-            }
 
             if(dontDoAnything)
             {
                 dontDoAnything = !canMove;
-
                 return;
+            }
+
+            if(rotateToTarget)
+            {
+                LookTowardsTarget();
             }
 
             if(health <= 0)
@@ -116,7 +157,21 @@ namespace SA
                 if(!isDead)
                 {
                     isDead = true;
-                    EnableRagdoll();
+                    if (ragdollRigids.Count != 0)
+                        EnableRagdoll();
+                    else
+                    {
+                        anim.Play("dead1");
+                        anim.transform.parent = null;
+                        Destroy(this.gameObject);
+
+                        /*Collider controllerCollider = rigid.gameObject.GetComponent<Collider>();
+                        controllerCollider.enabled = false;
+                        rigid.isKinematic = true;
+
+                        StartCoroutine("CloseAnimator");*/
+                    }
+
                 }
             }
 
@@ -136,20 +191,63 @@ namespace SA
                 parryIsOn = false;
                 anim.applyRootMotion = false;
 
-                //Debug
-                timer += Time.deltaTime;
-                if(timer > 3)
-                {
-                    DoAction();
-                    timer = 0;
-                }
+                MovementAnimation();
             }
+            else
+            {
+                if(anim.applyRootMotion == false)
+                    anim.applyRootMotion = true;
+            }
+
 
             characterStats.poise -= delta * poiseDegrade;
             if (characterStats.poise < 0)
                 characterStats.poise = 0;
 
         }
+
+        public void MovementAnimation()
+        {
+            float square = agent.desiredVelocity.sqrMagnitude;
+            float v = Mathf.Clamp(square, 0, .5f);
+
+            anim.SetFloat(StaticStrings.vertical, v, 0.2f, delta);
+         /*   Vector3 desired = agent.desiredVelocity;
+            Vector3 relative = transform.InverseTransformDirection(desired);
+
+            float v = relative.z;
+            float h = relative.x;
+
+            v = Mathf.Clamp(v, -.5f, .5f);
+            h = Mathf.Clamp(h, -.5f, .5f);
+
+            anim.SetFloat(StaticStrings.horizontal, h, 0.2f, delta);
+            anim.SetFloat(StaticStrings.vertical, v, 0.2f, delta);*/
+        }
+
+        void LookTowardsTarget()
+        {
+            Vector3 dir = dirToTarget;
+            dir.y = 0;
+            if (dir == Vector3.zero)
+                dir = transform.forward;
+
+            Quaternion targetRotation = Quaternion.LookRotation(dir);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, delta * 5);
+        }
+
+
+        public void SetDestination(Vector3 d)
+        {
+            if(!hasDestination)
+            {
+                hasDestination = true;
+                agent.isStopped = false;
+                agent.SetDestination(d);
+                targetDestination = d;
+            } 
+        }
+
 
         void DoAction()
         {
@@ -158,17 +256,22 @@ namespace SA
             anim.SetBool(StaticStrings.canMove, false);
         }
 
-        /*public void DoDamage(WeaponStats w)
+        public void DoDamage(Action a, Weapon curWeapon)
         {
+//            return;
+
             if (isInvicible)
                 return;
 
-            int damage = StatsCalculations.CalculateBaseDamage(w, characterStats);
+            // int damage = StatsCalculations.CalculateBaseDamage(curWeapon.weaponStats, characterStats);
+            int damage = 5;
 
             characterStats.poise += damage;
             health -= damage;
+        
+            //if (canMove || characterStats.poise > 100)
 
-            if(canMove || characterStats.poise > 100)
+            if (canMove)
             {
                 if (a.ovverideDamageAnim)
                     anim.Play(a.damageAnim);
@@ -184,14 +287,15 @@ namespace SA
 
             isInvicible = true;
             anim.applyRootMotion = true;
-            anim.SetBool(StaticStrings.canMove,false);
+            //anim.SetBool(StaticStrings.canMove,false);
         }
-        */
-        
-        public void DoDamage_()
+
+        public void DoDamage_ ()
         {
+           // return;
             if (isInvicible)
                 return;
+
             anim.Play("damage_3");
         }
 
@@ -217,9 +321,10 @@ namespace SA
 
         public void IsGettingParried(Action a, Weapon curWeapon)
         {
-            //int damage = StatsCalculations.CalculateBaseDamage(a.weaponStats, characterStats
-            //, a.parryMultiplier);
+           // int damage = StatsCalculations.CalculateBaseDamage(curWeapon.weaponStats, characterStats
+              //, a.parryMultiplier);
             int damage = 5;
+
             health -= damage;
             dontDoAnything = true;
             anim.SetBool(StaticStrings.canMove, false);
@@ -228,8 +333,8 @@ namespace SA
 
         public void IsGettingBackstabbed(Action a, Weapon curWeapon)
         {
-            //int damage = StatsCalculations.CalculateBaseDamage(a.weaponStats, characterStats
-            //, a.backstabMultiplier);
+           // int damage = StatsCalculations.CalculateBaseDamage(curWeapon.weaponStats, characterStats
+              //  , a.backstabMultiplier);
             int damage = 5;
             health -= damage;
           
@@ -238,12 +343,15 @@ namespace SA
             anim.Play(StaticStrings.backstabbed);
         }
 
+
         public ParticleSystem fireParticle;
         float _t;
 
-
         public void OnFire()
         {
+            if (fireParticle == null)
+                return;
+
             if(_t < 3)
             {
                 _t += Time.deltaTime;
@@ -255,6 +363,44 @@ namespace SA
                 spellEffect_loop = null;
             }
         }
-    }
 
+
+        public void OpenDamageColliders()
+        {
+            if (curAttack == null)
+                return;
+
+            if (curAttack.isDefaultDamageCollider || curAttack.damageCollider.Length ==0)
+            {
+                ObjectListStatus(defaultDamageColliders, true);
+            }
+            else
+            {
+                ObjectListStatus(curAttack.damageCollider, true);
+            }
+        }
+
+        public void CloseDamageColliders()
+        {
+            if (curAttack == null)
+                return;
+
+            if (curAttack.isDefaultDamageCollider || curAttack.damageCollider.Length == 0)
+            {
+                ObjectListStatus(defaultDamageColliders, false);
+            }
+            else
+            {
+                ObjectListStatus(curAttack.damageCollider, false);
+            }
+        }
+
+        void ObjectListStatus(GameObject[] l, bool status)
+        {
+            for (int i = 0; i < l.Length; i++)
+            {
+                l[i].SetActive(status);
+            }
+        }
+    }
 }

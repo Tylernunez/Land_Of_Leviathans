@@ -50,6 +50,7 @@ namespace SA
         public bool isLeftHand;
         public bool onEmpty;
         public bool closeWeapons;
+        public bool isInvicible;
 
         [Header("Other")]
         public EnemyTarget lockOnTarget;
@@ -76,6 +77,8 @@ namespace SA
         public float delta;
         [HideInInspector]
         public LayerMask ignoreLayers;
+        [HideInInspector]
+        public LayerMask ignoreForGroundCheck;
 
         [HideInInspector]
         public Action currentAction;
@@ -118,6 +121,7 @@ namespace SA
 
             gameObject.layer = 8;
             ignoreLayers = ~(1 << 9);
+            ignoreForGroundCheck = ~(1 << 9 | 1 << 10);
 
             anim.SetBool(StaticStrings.onGround, true);
 
@@ -130,6 +134,7 @@ namespace SA
             prevGround = true;
 
             DialogueManager.singleton.Init(this.transform);
+            onEmpty = true;
         }
 
         void SetupAnimator()
@@ -156,6 +161,7 @@ namespace SA
             anim.GetBoneTransform(HumanBodyBones.RightHand).localScale = Vector3.one;
         }
 
+
         public void FixedTick(float d)
         {
             delta = d;
@@ -163,7 +169,137 @@ namespace SA
             usingItem = anim.GetBool(StaticStrings.interacting);
             enableItem = anim.GetBool(StaticStrings.enableItem);
             anim.SetBool(StaticStrings.spellcasting, isSpellcasting);
+            onEmpty = anim.GetBool(StaticStrings.onEmpty);
 
+           
+            if(canRotate)
+            {
+                HandleRotation();
+            }
+
+            if (!onEmpty && !canMove && !canAttack) //Animation is playing
+                return;
+
+            closeWeapons = false;
+
+           
+
+            anim.applyRootMotion = false;
+            rigid.drag = (moveAmount > 0 || onGround == false) ? 0 : 4;
+            
+            float targetSpeed = moveSpeed;
+            if(usingItem || isSpellcasting)
+            {
+                run = false;
+                moveAmount = Mathf.Clamp(moveAmount, 0, 0.45f);
+            }
+
+            if (run)
+                targetSpeed = runSpeed;
+            
+            if(onGround && canMove)
+                rigid.velocity = moveDir * (targetSpeed * moveAmount);
+
+            if (run)
+                lockOn = false;
+
+            HandleRotation();
+
+          
+        }
+
+        public void Tick(float d)
+        {
+            delta = d;
+            onGround = OnGround();
+            anim.SetBool(StaticStrings.onGround, onGround);
+
+            HandleAirTime();
+            HandleInvicibilityFrames();
+            HandleWeaponModelVisibility();
+            HandleEnableIK();
+            HandleInActionTimer();
+            pickManager.Tick();
+
+            if (onEmpty)
+            {
+                canAttack = true;
+                canMove = true;
+            }
+
+            if (!onEmpty && !canMove && !canAttack) //Animation is playing
+                return;
+
+            if (canMove && !onEmpty)
+            {
+                if (moveAmount > 0.3f)
+                {
+                    anim.CrossFade("Empty Override", 0.1f);
+                    onEmpty = true;
+                }
+            }
+
+            MonitorKick();
+
+            if (canAttack)
+                DetectAction();
+            if (canMove)
+            {
+                DetectItemAction();
+            }
+
+            anim.SetBool(StaticStrings.lockon, lockOn);
+
+            if (lockOn == false)
+                HandleMovementAnimations();
+            else
+                HandleLockOnAnimations(moveDir);
+
+            a_hook.useIk = enableIK;
+            //         anim.SetBool(StaticStrings.blocking, isBlocking);
+            anim.SetBool(StaticStrings.isLeft, isLeftHand);
+
+            HandleBlocking();
+
+            if (isSpellcasting)
+            {
+                HandleSpellcasting();
+                return;
+            }
+
+            a_hook.CloseRoll();
+            HandleRolls();
+        }
+
+        void HandleInActionTimer()
+        {
+            if (inAction)
+            {
+                anim.applyRootMotion = true;
+
+                _actionDelay += delta;
+                if (_actionDelay > 0.3f)
+                {
+                    inAction = false;
+                    _actionDelay = 0;
+                }
+                else
+                {
+
+                }
+            }
+        }
+
+        void HandleEnableIK()
+        {
+            if (isBlocking == false && isSpellcasting == false)
+            {
+                enableIK = false;
+            }
+        }
+
+        void HandleWeaponModelVisibility()
+        {
             if (!closeWeapons)
             {
                 GameObject mm = null;
@@ -173,9 +309,9 @@ namespace SA
                     mm = inventoryManager.rightHandWeapon.weaponModel;
                 }
 
-                if(mm == null)
+                if (mm == null)
                 {
-                    if(inventoryManager.leftHandWeapon != null)
+                    if (inventoryManager.leftHandWeapon != null)
                     {
                         mm = inventoryManager.leftHandWeapon.weaponModel;
                     }
@@ -205,106 +341,30 @@ namespace SA
                 if (inventoryManager.leftHandWeapon != null)
                     inventoryManager.leftHandWeapon.weaponModel.SetActive(false);
             }
+        }
 
-            if(isBlocking == false && isSpellcasting == false)
+        void HandleInvicibilityFrames()
+        {
+            if (isInvicible)
             {
-                enableIK = false;
-            }
-
-            if (inAction)
-            {
-                anim.applyRootMotion = true;
-
-                _actionDelay += delta;
-                if (_actionDelay > 0.3f)
+                i_timer += delta;
+                if (i_timer > 0.5f)
                 {
-                    inAction = false;
-                    _actionDelay = 0;
-                }
-                else
-                {
-                    return;
+                    i_timer = 0;
+                    isInvicible = false;
                 }
             }
 
-            onEmpty = anim.GetBool(StaticStrings.onEmpty);
 
-            if(onEmpty)
-            {
-                canAttack = true;
-                canMove = true;
-            }
+        }
 
-            if(canRotate)
-            {
-                HandleRotation();
-            }
-
-            if (!onEmpty && !canMove && !canAttack) //Animation is playing
-                return;
-
-            closeWeapons = false;
-
-            if (canMove && !onEmpty)
-            {
-                if (moveAmount > 0.3f)
-                {
-                    anim.CrossFade("Empty Override", 0.1f);
-                    onEmpty = true;
-                }
-            }
-
-            MonitorKick();
-
-            if (canAttack)
-                DetectAction();
-            if (canMove)
-            {
-                DetectItemAction();
-            }
-
-            anim.applyRootMotion = false;
-            rigid.drag = (moveAmount > 0 || onGround == false) ? 0 : 4;
-            
-            float targetSpeed = moveSpeed;
-            if(usingItem || isSpellcasting)
-            {
-                run = false;
-                moveAmount = Mathf.Clamp(moveAmount, 0, 0.45f);
-            }
-
-            if (run)
-                targetSpeed = runSpeed;
-            
-            if(onGround && canMove)
-                rigid.velocity = moveDir * (targetSpeed * moveAmount);
-
-            if (run)
-                lockOn = false;
-
-            HandleRotation();
-
-            anim.SetBool(StaticStrings.lockon, lockOn);
-
-            if (lockOn == false)
-                HandleMovementAnimations();
+        void HandleAirTime()
+        {
+            if (!onGround)
+                airTimer += delta;
             else
-                HandleLockOnAnimations(moveDir);
+                airTimer = 0;
 
-            a_hook.useIk = enableIK;
-            //         anim.SetBool(StaticStrings.blocking, isBlocking);
-            anim.SetBool(StaticStrings.isLeft, isLeftHand);
-
-            HandleBlocking();
-
-            if (isSpellcasting)
-            {
-                HandleSpellcasting();
-                return;
-            }
-
-            a_hook.CloseRoll();
-            HandleRolls();
         }
 
         public bool IsInput()
@@ -536,7 +596,7 @@ namespace SA
                 (s_inst.spellType == SpellType.looping));
             anim.SetBool(StaticStrings.spellcasting, true);
             anim.SetBool(StaticStrings.mirror, slot.mirror);
-            anim.CrossFade(targetAnim, 0.2f);
+            PlayAnimation(targetAnim);
 
             cur_focusCost = s_slot.focusCost;
             cur_stamCost = s_slot.staminaCost;
@@ -545,17 +605,6 @@ namespace SA
 
             if (spellCast_start != null)
                 spellCast_start();
-        }
-
-        public void PlayAnimation(string targetAnim, bool isMirrored)
-        {
-            canAttack = false;
-            onEmpty = false;
-            canMove = false;
-            inAction = true;
-            canKick = false;
-            anim.SetBool(StaticStrings.mirror, isMirrored);
-            anim.CrossFade(targetAnim, 0.2f);
         }
 
         float cur_focusCost;
@@ -626,7 +675,7 @@ namespace SA
                
                 string targetAnim = spellTargetAnim;
                 anim.SetBool(StaticStrings.mirror, spellIsMirrored);
-                anim.CrossFade(targetAnim, 0.2f);
+                PlayAnimation(targetAnim);
             }
         }
 
@@ -639,7 +688,7 @@ namespace SA
             {
                 if (blockAnim)
                 {
-                    anim.CrossFade(block_idle_anim, 0.1f);
+                    PlayAnimation(block_idle_anim);
                     blockAnim = false;
                 }
             }
@@ -723,7 +772,7 @@ namespace SA
                 canAttack = false;
                 inAction = true;
                 anim.SetBool(StaticStrings.mirror, slot.mirror);
-                anim.CrossFade(StaticStrings.parry_attack, 0.2f);
+                PlayAnimation(StaticStrings.parry_attack);
                 lockOnTarget = null;
                 return true;
             }
@@ -797,7 +846,7 @@ namespace SA
 
                 string targetAnim = slot.firstStep.targetAnim;
                 targetAnim += (isLeftHand) ? "_l" : "_r";
-                anim.CrossFade(targetAnim, 0.1f);
+                PlayAnimation(targetAnim);
                 blockAnim = true;
             }
         }
@@ -826,22 +875,10 @@ namespace SA
             canAttack = false;
             inAction = true;
             anim.SetBool(StaticStrings.mirror, slot.mirror);
-            anim.CrossFade(targetAnim, 0.2f);
+            PlayAnimation(targetAnim);
         }
 
-        public void Tick(float d)
-        {
-            delta = d;
-            onGround = OnGround();
-            anim.SetBool(StaticStrings.onGround, onGround);
-
-            if (!onGround)
-                airTimer += delta;
-            else
-                airTimer = 0;
-
-            pickManager.Tick();
-        }
+        float i_timer;
 
         void HandleRolls()
         {
@@ -884,11 +921,7 @@ namespace SA
             anim.SetFloat(StaticStrings.vertical, v);
             anim.SetFloat(StaticStrings.horizontal,h);
 
-            onEmpty = false;
-            canMove = false;
-            canAttack = false;
-            inAction = true;
-            anim.CrossFade(StaticStrings.Rolls, 0.2f);
+            PlayAnimation(StaticStrings.Rolls);
             isBlocking = false;
         }
 
@@ -946,7 +979,7 @@ namespace SA
             float dis = toGround + 0.3f;
             RaycastHit hit;
             Debug.DrawRay(origin, dir * dis);
-            if(Physics.Raycast(origin,dir,out hit, dis, ignoreLayers))
+            if(Physics.Raycast(origin,dir,out hit, dis, ignoreForGroundCheck))
             {
                 r = true;
                 Vector3 targetPosition = hit.point;
@@ -989,8 +1022,8 @@ namespace SA
 
                 anim.SetFloat(StaticStrings.vertical, 1);
                 anim.SetFloat(StaticStrings.horizontal, 0);
-
                 anim.CrossFade(StaticStrings.Rolls, 0.2f);
+                //PlayAnimation(StaticStrings.Rolls);
             }
 
         }
@@ -1045,6 +1078,19 @@ namespace SA
             canAttack = false;
             inAction = true;
             isBlocking = false;
+            anim.SetBool(StaticStrings.onEmpty, false);
+            anim.CrossFade(targetAnim, 0.2f);
+        }
+
+        public void PlayAnimation(string targetAnim, bool isMirrored)
+        {
+            canAttack = false;
+            onEmpty = false;
+            canMove = false;
+            inAction = true;
+            canKick = false;
+            anim.SetBool(StaticStrings.onEmpty, false);
+            anim.SetBool(StaticStrings.mirror, isMirrored);
             anim.CrossFade(targetAnim, 0.2f);
         }
 
@@ -1149,6 +1195,37 @@ namespace SA
         public void StopAffectinBlocking()
         {
             isBlocking = false;
+        }
+
+        public void DoDamage(AIAttacks a)
+        {
+            if(isInvicible)
+                return;
+
+            int damage = 5;
+
+            characterStats._health -= damage;
+
+            if (a.hasReactAnim)
+            {
+                anim.Play(a.reactAnim);
+            }
+            else
+            {
+                int ran = Random.Range(0, 100);
+                string tA = (ran > 50) ? StaticStrings.damage1 : StaticStrings.damage2;
+                anim.Play(tA);
+            }
+
+           
+            canRotate = false;
+            anim.SetBool(StaticStrings.onEmpty, false);
+            canMove = false;
+            onEmpty = false;
+            inAction = true;
+            canAttack = false;
+            isInvicible = true;
+            anim.applyRootMotion = true;
         }
     }
 }

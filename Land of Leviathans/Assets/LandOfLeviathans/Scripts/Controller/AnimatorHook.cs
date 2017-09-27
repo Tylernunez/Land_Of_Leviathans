@@ -64,6 +64,7 @@ namespace SA
             roll_t = 0;
         }
 
+        
         public void CloseRoll()
         {
             if (rolling == false)
@@ -86,6 +87,11 @@ namespace SA
 
             if (rigid == null)
                 return;
+
+            if(jumping)
+            {
+                return;
+            }
 
             if(states != null)
             {
@@ -119,10 +125,22 @@ namespace SA
 
                 Vector3 v = (delta2 * rm_multi) / delta;
 
-                if(!states.onGround)
-                    v += Physics.gravity;
+                if (states)
+                {
+                    if (!states.onGround)
+                        // v += Physics.gravity;
+                        v.y = rigid.velocity.y;
+                }
 
-                rigid.velocity = v;
+                if (eStates)
+                {
+                    //Debug.Log("v");
+                    eStates.agent.velocity = v;
+                }
+                else
+                {
+                    rigid.velocity = v;
+                }
             }
             else
             {
@@ -142,7 +160,8 @@ namespace SA
                 Vector3 v2 = (relative * rm_multi);
                 
                 if(!states.onGround)
-                    v2 += Physics.gravity;
+                    // v2 += Physics.gravity;
+                    v2.y = rigid.velocity.y;
 
                 rigid.velocity = v2; 
             }
@@ -205,6 +224,11 @@ namespace SA
                 states.inventoryManager.OpenAllDamageColliders();
             }
 
+            if(eStates)
+            {
+                eStates.OpenDamageColliders();
+            }
+
             OpenParryFlag();
         }
 
@@ -215,7 +239,13 @@ namespace SA
                 states.damageIsOn = false;
                 states.inventoryManager.CloseAllDamageColliders();
             }
-   
+
+            if (eStates)
+            {
+                eStates.CloseDamageColliders();
+            }
+
+
             CloseParryFlag();
         }
 
@@ -294,6 +324,11 @@ namespace SA
             {
                 states.canRotate = true;
             }
+
+            if(eStates)
+            {
+                eStates.rotateToTarget = true;
+            }
         }
 
         public void CloseRotationControl()
@@ -301,6 +336,11 @@ namespace SA
             if(states)
             {
                 states.canRotate = false;
+            }
+
+            if (eStates)
+            {
+                eStates.rotateToTarget = false;
             }
         }
 

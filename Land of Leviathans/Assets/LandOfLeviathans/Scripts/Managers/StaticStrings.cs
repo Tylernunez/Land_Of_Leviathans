@@ -23,6 +23,7 @@ namespace SA
         public static string Pad_x = "Pad_X";
         public static string Pad_y = "Pad_Y";
         public static string select = "Select";
+        public static string start = "Start";
 
         //Animator Parameters
         public static string vertical = "vertical";
@@ -58,7 +59,6 @@ namespace SA
         public static string emptyRight = "Empty Right";
         public static string equipWeapon_oh = "equipWeapon_oh";
         public static string pick_up = "pick_up";
-        public static string start = "start";
         public static string enableItem = "enableItem";
 
         //UI Interactions

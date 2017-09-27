@@ -19,7 +19,9 @@ namespace SA
         public float sizeMultiplier = 2;
         int curSouls;
 
+        public static UIManager singleton;
         public GesturesManager gestures;
+
 
         public GameObject interactCard;
         public Text ac_action_type;
@@ -33,6 +35,11 @@ namespace SA
             interactCard.SetActive(false);
             CloseCards();
             CloseAnnounceType();
+        }
+
+        void Awake()
+        {
+            singleton = this;
         }
 
         public void InitSouls(int v)
@@ -152,11 +159,6 @@ namespace SA
             interactCard.SetActive(false);
         }
 
-        public static UIManager singleton;
-        void Awake()
-        {
-            singleton = this;
-        }
     }
 
     public enum UIActionType
