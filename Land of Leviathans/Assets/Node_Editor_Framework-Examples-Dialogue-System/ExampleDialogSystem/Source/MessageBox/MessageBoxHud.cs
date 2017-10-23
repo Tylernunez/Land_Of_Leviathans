@@ -21,7 +21,7 @@ public class MessageBoxHud : MonoBehaviour
     private int _dialogId;
     private DialogManager _dialogManager;
 
-	private float _initialHeight = 170;
+	private float _initialHeight = 470.5f;
 
 
 	public void Construct(int dialogId, DialogManager dialogManager)
@@ -79,7 +79,6 @@ public class MessageBoxHud : MonoBehaviour
 		_okButton.ShowButton(true);
 		_okButton.SetText(dialogNode.IsNextAvailable() ? EButtonText.NEXT : EButtonText.OKAY);
 
-		_characterPortrait.sprite = dialogNode.CharacterPotrait;
 		_characterName.text = dialogNode.CharacterName;
 		_sayingText.text = dialogNode.DialogLine;
 	}
@@ -90,7 +89,6 @@ public class MessageBoxHud : MonoBehaviour
 		_okButton.ShowButton(true);
 		_okButton.SetText(dialogStartNode.IsNextAvailable() ? EButtonText.NEXT : EButtonText.OKAY);
 
-		_characterPortrait.sprite = dialogStartNode.CharacterPotrait;
 		_characterName.text = dialogStartNode.CharacterName;
 		_sayingText.text = dialogStartNode.DialogLine;
 	}
@@ -101,7 +99,6 @@ public class MessageBoxHud : MonoBehaviour
 		_backButton.SetActive(dialogNode.IsBackAvailable());
 		_okButton.ShowButton(false);
 
-		_characterPortrait.sprite = dialogNode.CharacterPotrait;
 		_characterName.text = dialogNode.CharacterName;
 		_sayingText.text = dialogNode.DialogLine;
 
