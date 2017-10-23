@@ -63,12 +63,9 @@ namespace SA
 
             for (int i = 0; i < obj.weapons_all.Count; i++)
             {
-                if (obj.weapons_all[i].name_item == itemId)
+                if (obj.weapons_all[i].item_id == itemId)
                 {
                     Weapon w = obj.weapons_all[i];
-                    w.model_eulers = targetModel.transform.localEulerAngles;
-                    w.model_pos = targetModel.transform.position;
-                    w.model_scale = targetModel.transform.position;
                     return;
                 }
             }
@@ -96,12 +93,9 @@ namespace SA
 
             for (int i = 0; i < obj.consumables.Count; i++)
             {
-                if (obj.consumables[i].name_item == itemId)
+                if (obj.consumables[i].item_id == itemId)
                 {
                     Consumable w = obj.consumables[i];
-                    w.model_eulers = targetModel.transform.localEulerAngles;
-                    w.model_pos = targetModel.transform.position;
-                    w.model_scale = targetModel.transform.position;
                     return;
                 }
             }

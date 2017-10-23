@@ -683,7 +683,7 @@ namespace SA.UI
             if (itemList == null)
                 return;
          
-            List<ItemInventoryInstance> candidateList = new List<ItemInventoryInstance>();
+            List<ItemInventoryInstance> canidateList = new List<ItemInventoryInstance>();
            
             if(t == ItemType.equipment)
             {
@@ -693,38 +693,38 @@ namespace SA.UI
 
                     if(armor.armorType == curEqSlot.armorType)
                     {
-                        candidateList.Add(itemList[i]);
+                        canidateList.Add(itemList[i]);
                     }
                 }
             }
             else
             {
-                candidateList.AddRange(itemList);
+                canidateList.AddRange(itemList);
             }
 
-            if (candidateList.Count == 0)
+            if (canidateList.Count == 0)
                 return;
 
             GameObject prefab = eq_left.inventory.slotTemplate;
             Transform p = eq_left.inventory.slotGrid;
 
-            int dif = iconSlotsCreated.Count - candidateList.Count;
+            int dif = iconSlotsCreated.Count - canidateList.Count;
             int extra = (dif>0)? dif: 0;
 
-            maxInvIndex = candidateList.Count;
+            maxInvIndex = canidateList.Count;
 
             curCreatedItems = new List<IconBase>();
             curInvIndex = 0;
 
-            for (int i = 0; i < candidateList.Count + extra; i++)
+            for (int i = 0; i < canidateList.Count + extra; i++)
             {
-                if(i > candidateList.Count-1)
+                if(i > canidateList.Count-1)
                 {
                     iconSlotsCreated[i].gameObject.SetActive(false);
                     continue;
                 }
 
-                Item item = ResourcesManager.singleton.GetItem(candidateList[i].itemId, t);
+                Item item = ResourcesManager.singleton.GetItem(canidateList[i].itemId, t);
 
                 IconBase icon = null;
                 if (iconSlotsCreated.Count-1 < i)
@@ -744,7 +744,7 @@ namespace SA.UI
                 icon.gameObject.SetActive(true);
                 icon.icon.enabled = true;
                 icon.icon.sprite = item.icon;
-                icon.id = candidateList[i].uniqueId;
+                icon.id = canidateList[i].uniqueId;
             }
         }
 

@@ -33,7 +33,6 @@ namespace SA
             to.backstabMultiplier = from.backstabMultiplier;
             to.LeftHandMirror = from.LeftHandMirror;
             to.modelPrefab = from.modelPrefab;
-          
         }
 
         public static void DeepCopyActionToAction(Action to, Action from)
@@ -113,14 +112,6 @@ namespace SA
             }
 
             to.weaponId = from.weaponId;
-            to.a_physical = from.a_physical;
-            to.a_slash = from.a_slash;
-            to.a_strike = from.a_strike;
-            to.a_thrust = from.a_thrust;
-            to.a_magic = from.a_magic;
-            to.a_lighting = from.a_lighting;
-            to.a_fire = from.a_fire;
-            to.a_dark = from.a_dark;
         }
 
         public static Action GetAction(ActionInput inp, List<Action> actionSlots)
@@ -172,9 +163,6 @@ namespace SA
           //  to.itemDescription = from.itemDescription;
             to.item_id = from.item_id;
             to.itemPrefab = from.itemPrefab;
-            to.model_scale = from.model_scale;
-            to.model_eulers = from.model_eulers;
-            to.model_pos = from.model_pos;
         }
     }
 }

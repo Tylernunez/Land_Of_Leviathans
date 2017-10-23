@@ -62,6 +62,18 @@ namespace SA
         {
             ScriptableObjectManager.CreateAsset<ArmorScriptableObject>();
         }
+
+        [MenuItem("Assets/Inventory/Create NPC List Scriptable Object")]
+        public static void CreateNPCList()
+        {
+            ScriptableObjectManager.CreateAsset<NPCScriptableObject>();
+        }
+
+        [MenuItem("Assets/Inventory/Create Interactions List Scriptable Object")]
+        public static void CreateInteractionsList()
+        {
+            ScriptableObjectManager.CreateAsset<InteractionsScriptableObject>();
+        }
     }
 }
 #endif

@@ -192,13 +192,25 @@ namespace SA
                 }
                 return firstStep;
             }
+            if(comboSteps != null)
+            {
+                if(indx - 1 < comboSteps.Count - 1)
+                {
+                    ActionAnim retVal = comboSteps[indx - 1];
+                    indx++;
+                    if (indx > comboSteps.Count - 1)
+                        indx = 0;
 
-            ActionAnim retVal = comboSteps[indx-1];
-            indx++;
-            if (indx > comboSteps.Count - 1)
-                indx = 0;
-            
-            return retVal;
+                    return retVal;
+                }
+                else
+                {
+                    return firstStep;
+                }
+            }else
+            {
+                return firstStep;
+            }
         }
 
         [HideInInspector]

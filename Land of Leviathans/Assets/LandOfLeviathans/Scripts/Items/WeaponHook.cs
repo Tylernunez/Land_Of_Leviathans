@@ -26,7 +26,10 @@ namespace SA
 
         public void InitDamageColliders(StateManager st)
         {
-            
+            for (int i = 0; i < damageCollider.Length; i++)
+            {
+                damageCollider[i].SetActive(false);
+            }
         }
     }
 }

@@ -181,9 +181,27 @@ namespace SA
             vertical = Input.GetAxis(StaticStrings.Vertical);
             horizontal = Input.GetAxis(StaticStrings.Horizontal);
 
-          //  if (invUI.isMenu)
+            //  if (invUI.isMenu)
             //{ 
-                b_input = Input.GetButton(StaticStrings.B);
+
+            bool menu = Input.GetButtonUp(StaticStrings.start);
+
+            if (menu)
+            {
+                invUI.isMenu = !invUI.isMenu;
+
+                if (invUI.isMenu)
+                {
+                    isGesturesOpen = false;
+                    invUI.OpenUI();
+                }
+                else
+                {
+                    invUI.CloseUI();
+                }
+            }
+
+            b_input = Input.GetButton(StaticStrings.B);
                 a_input = Input.GetButtonUp(StaticStrings.A);
                 y_input = Input.GetButtonUp(StaticStrings.Y);
                 x_input = Input.GetButton(StaticStrings.X);
@@ -222,22 +240,7 @@ namespace SA
                 }
             //}
 
-            bool menu = Input.GetButtonUp(StaticStrings.start);
-
-            if (menu)
-            {
-                invUI.isMenu = !invUI.isMenu;
-
-                if (invUI.isMenu)
-                {
-                    isGesturesOpen = false;
-                    invUI.OpenUI();
-                }
-                else
-                {
-                    invUI.CloseUI();
-                }
-            }
+           
            
         }
 

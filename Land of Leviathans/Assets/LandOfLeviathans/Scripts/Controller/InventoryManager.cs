@@ -648,22 +648,22 @@ namespace SA
         public string itemDescription;
         public string skillDescription;
         public Sprite icon;
-
-        public Vector3 model_pos;
-        public Vector3 model_eulers;
-        public Vector3 model_scale;
     }
 
     [System.Serializable]
-    public class Weapon : Item
+    public class Weapon
     {
+        public string item_id;
         public string oh_idle;
         public string th_idle;
+
         public List<Action> actions;
         public List<Action> two_handedActions;
+
         public float parryMultiplier;
         public float backstabMultiplier;
         public bool LeftHandMirror;
+
         public GameObject modelPrefab;
   
         public Action GetAction(List<Action> l, ActionInput inp)
@@ -681,7 +681,6 @@ namespace SA
 
             return null;
         }
-
     }
 
     [System.Serializable]
@@ -714,8 +713,9 @@ namespace SA
     }
 
     [System.Serializable]
-    public class Consumable : Item
+    public class Consumable
     {
+        public string item_id;
         public string consumableEffect;
         public string targetAnim;
         public GameObject itemPrefab;

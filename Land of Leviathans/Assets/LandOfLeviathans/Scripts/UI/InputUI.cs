@@ -35,7 +35,7 @@ namespace SA
             d_left = Input.GetKeyUp(KeyCode.Alpha3) || d_x < 0;
             d_right = Input.GetKeyUp(KeyCode.Alpha4) || d_x > 0;
 
-            rightAxis_down = Input.GetButtonUp(StaticStrings.R) || Input.GetKeyUp(KeyCode.T);
+            rightAxis_down = Input.GetButtonUp(StaticStrings.L) || Input.GetKeyUp(KeyCode.T);
         }
 
         public static InputUI singleton;
