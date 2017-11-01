@@ -135,6 +135,7 @@ namespace SA
 
             DialogueManager.singleton.Init(this.transform);
             onEmpty = true;
+
         }
 
         void SetupAnimator()
@@ -1202,7 +1203,7 @@ namespace SA
             if(isInvicible)
                 return;
 
-            int damage = 5;
+            int damage = 20;
 
             characterStats._health -= damage;
 
@@ -1227,5 +1228,36 @@ namespace SA
             isInvicible = true;
             anim.applyRootMotion = true;
         }
+
+        public void DoDamage(Action a, Weapon curWeapon)
+        {
+            if (isInvicible)
+                return;
+
+            int damage = 5;
+
+            characterStats.poise += damage;
+            characterStats.hp -= damage;
+
+            if (canMove)
+            {
+                if (a.ovverideDamageAnim)
+                {
+                    PlayAnimation(a.damageAnim);
+                }
+                else
+                {
+                    int ran = Random.Range(0, 100);
+                    string tA = (ran > 50) ? StaticStrings.damage1 : StaticStrings.damage2;
+                    PlayAnimation(tA);
+                }
+            }
+
+            isInvicible = true;
+            anim.applyRootMotion = true;
+        }
+
+       
     }
+
 }

@@ -31,25 +31,39 @@ namespace SA
 
                 if (es != null)
                 {
-                        es.DoDamage(states.currentAction,
-                   states.inventoryManager.GetCurrentWeapon(states.currentAction.mirror)
-                   );
+
+                    es.DoDamage(states.currentAction,
+                        states.inventoryManager.GetCurrentWeapon(states.currentAction.mirror)
+                        );
                 }
+
+                StateManager st = other.transform.GetComponentInParent<StateManager>();
+
+                if (st != null)
+                {
+                    if (st != states)
+                    {
+                        st.DoDamage(states.currentAction,
+                        states.inventoryManager.GetCurrentWeapon(states.currentAction.mirror)
+                        );
+                    }
+                }
+
                 return;
             }
 
             if (estates)
             {
+                //Debug.Log("v");
+
                 StateManager st = other.transform.GetComponentInParent<StateManager>();
 
-                if(st != null)
+                if (st != null)
                 {
-                    Debug.Log("v");
+                    //      Debug.Log("v");
                     st.DoDamage(estates.GetCurAttack());
                 }
             }
-           
-
         }
     }
 }

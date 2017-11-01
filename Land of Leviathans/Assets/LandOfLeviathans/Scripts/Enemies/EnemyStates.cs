@@ -263,8 +263,8 @@ namespace SA
             if (isInvicible)
                 return;
 
-            // int damage = StatsCalculations.CalculateBaseDamage(curWeapon.weaponStats, characterStats);
-            int damage = 5;
+            //int damage = StatsCalculations.CalculateBaseDamage(curWeapon.weaponStats, characterStats);
+            int damage = 20;
 
             characterStats.poise += damage;
             health -= damage;

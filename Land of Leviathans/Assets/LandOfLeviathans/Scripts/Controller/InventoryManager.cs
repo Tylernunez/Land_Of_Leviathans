@@ -480,6 +480,10 @@ namespace SA
 
             inst.w_hook = inst.weaponModel.GetComponentInChildren<WeaponHook>();
             inst.w_hook.InitDamageColliders(states);
+            foreach(GameObject d in inst.w_hook.damageCollider)
+            {
+                d.GetComponent<DamageCollider>().InitPlayer(states);
+            }
 
             inst.weaponModel.SetActive(false);
             return inst;
