@@ -15,7 +15,7 @@ namespace LifeGrid
         public bool isDifficultTerrain;
         public Object Inhabitants;
 
-        public void Init()
+        public Cell()
         {
             Random rng = new Random();
             //Determine Region Type, This can be refined and changed at a later date if desired
@@ -23,7 +23,7 @@ namespace LifeGrid
 
 
         }
-        public void Init(int regionType)
+        public Cell(int regionType)
         {
             this.regionType = regionType;
         }
