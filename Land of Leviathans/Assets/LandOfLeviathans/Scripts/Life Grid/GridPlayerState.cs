@@ -4,59 +4,32 @@ using UnityEngine;
 
 namespace LoL
 {
-    public class StateManager : MonoBehaviour
+    public class GridPlayerState : MonoBehaviour
     {
         [Header("Init")]
         public GameObject activeModel;
 
-        [Header("Stats")]
-        public Attributes attributes;
-        public CharacterStats characterStats;
-
         [Header("Inputs")]
         public float vertical;
         public float horizontal;
-    
+
         public Vector3 moveDir;
         public bool rt, rb, lt, lb;
-        public bool rollInput;
-        public bool itemInput;
 
         [Header("Stats")]
         public float moveSpeed = 2;
         public float runSpeed = 3.5f;
-        public float rotateSpeed = 5;
-        public float toGround = 0.5f;
-        public float rollSpeed = 1;
-        public float parryOffset = 1.4f;
-        public float backStabOffset = 1.4f;
 
         [Header("States")]
         public bool onGround;
         public bool run;
-        public bool lockOn;
         public bool inAction;
         public bool canMove;
-        public bool damageIsOn;
         public bool canRotate;
         public bool canAttack;
         public bool isSpellcasting;
-        public bool enableIK;
-        public bool isTwoHanded;
         public bool usingItem;
-        public bool canBeParried;
-        public bool parryIsOn;
-        public bool isBlocking;
-        public bool isLeftHand;
-        public bool onEmpty;
-        public bool closeWeapons;
         public bool isInvicible;
-
-        [Header("Other")]
-        public EnemyTarget lockOnTarget;
-        public Transform lockOnTransform;
-        public AnimationCurve roll_curve;
-        //public EnemyStates parryTarget;
 
         [HideInInspector]
         public Animator anim;
@@ -100,14 +73,8 @@ namespace LoL
 
         public void Init()
         {
-            SetupAnimator();
-            rigid = GetComponent<Rigidbody>();
-            rigid.angularDrag = 999;
-            rigid.drag = 4;
-            rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
-
-            //boneHelper = gameObject.AddComponent<BoneHelper>();
-
+            //Initialize Inventory
+            /*
             inventoryManager = GetComponent<InventoryManager>();
             inventoryManager.Init(this);
 
@@ -115,14 +82,13 @@ namespace LoL
             actionManager.Init(this);
 
             a_hook = activeModel.GetComponent<AnimatorHook>();
-            if(a_hook == null)
+            if (a_hook == null)
                 a_hook = activeModel.AddComponent<AnimatorHook>();
             a_hook.Init(this, null);
 
             gameObject.layer = 8;
             ignoreLayers = ~(1 << 9);
             ignoreForGroundCheck = ~(1 << 9 | 1 << 10);
-
             anim.SetBool(StaticStrings.onGround, true);
 
             pickManager = GetComponent<PickableItemsManager>();
@@ -135,6 +101,7 @@ namespace LoL
 
             DialogueManager.singleton.Init(this.transform);
             onEmpty = true;
+            */
 
         }
 
@@ -172,8 +139,8 @@ namespace LoL
             anim.SetBool(StaticStrings.spellcasting, isSpellcasting);
             onEmpty = anim.GetBool(StaticStrings.onEmpty);
 
-           
-            if(canRotate)
+
+            if (canRotate)
             {
                 HandleRotation();
             }
@@ -183,13 +150,13 @@ namespace LoL
 
             closeWeapons = false;
 
-           
+
 
             anim.applyRootMotion = false;
             rigid.drag = (moveAmount > 0 || onGround == false) ? 0 : 4;
-            
+
             float targetSpeed = moveSpeed;
-            if(usingItem || isSpellcasting)
+            if (usingItem || isSpellcasting)
             {
                 run = false;
                 moveAmount = Mathf.Clamp(moveAmount, 0, 0.45f);
@@ -197,8 +164,8 @@ namespace LoL
 
             if (run)
                 targetSpeed = runSpeed;
-            
-            if(onGround && canMove)
+
+            if (onGround && canMove)
                 rigid.velocity = moveDir * (targetSpeed * moveAmount);
 
             if (run)
@@ -206,7 +173,7 @@ namespace LoL
 
             HandleRotation();
 
-          
+
         }
 
         public void Tick(float d)
@@ -370,7 +337,7 @@ namespace LoL
 
         public bool IsInput()
         {
-            if ( rt || rb || lt || lb || rollInput)
+            if (rt || rb || lt || lb || rollInput)
                 return true;
 
             return false;
@@ -456,17 +423,17 @@ namespace LoL
                 default:
                     break;
             }
-            
+
         }
 
         void MonitorKick()
         {
-            if(!holdKick)
+            if (!holdKick)
             {
-                if(moveAmount > moveAmountThresh)
+                if (moveAmount > moveAmountThresh)
                 {
                     _kickTimer += delta;
-                    if(_kickTimer < kickMaxTime)
+                    if (_kickTimer < kickMaxTime)
                     {
                         canKick = true;
                     }
@@ -489,10 +456,10 @@ namespace LoL
             }
             else
             {
-                if(moveAmount < moveAmountThresh)
+                if (moveAmount < moveAmountThresh)
                 {
                     _kickTimer -= delta;
-                    if(_kickTimer < 0)
+                    if (_kickTimer < 0)
                     {
                         _kickTimer = 0;
                         holdKick = false;
@@ -513,9 +480,9 @@ namespace LoL
             if (CheckForBackstab(slot))
                 return;
 
-            if(slot.firstStep.input == ActionInput.rb)
+            if (slot.firstStep.input == ActionInput.rb)
             {
-                if(canKick)
+                if (canKick)
                 {
                     string kickAnim = "kick 1";
                     if (slot.overrideKick)
@@ -528,7 +495,7 @@ namespace LoL
             }
 
             string targetAnim = null;
-            targetAnim = 
+            targetAnim =
                 slot.GetActionStep(ref actionManager.actionIndex)
                 .targetAnim;
 
@@ -556,7 +523,7 @@ namespace LoL
             if (characterStats._stamina < slot.staminaCost)
                 return;
 
-            if (slot.spellClass != inventoryManager.currentSpell.instance.spellClass 
+            if (slot.spellClass != inventoryManager.currentSpell.instance.spellClass
                 || characterStats._focus < slot.focusCost)
             {
                 PlayAnimation("cant_spell", slot.mirror);
@@ -601,7 +568,7 @@ namespace LoL
 
             cur_focusCost = s_slot.focusCost;
             cur_stamCost = s_slot.staminaCost;
-    
+
             a_hook.InitIKForBreathSpell(spellIsMirrored);
 
             if (spellCast_start != null)
@@ -633,12 +600,12 @@ namespace LoL
 
         void HandleSpellcasting()
         {
-            if(curSpellType == SpellType.looping)
+            if (curSpellType == SpellType.looping)
             {
                 enableIK = true;
                 a_hook.currentHand = (spellIsMirrored) ? AvatarIKGoal.LeftHand : AvatarIKGoal.RightHand;
 
-                if ((rb == false && lb == false )|| characterStats._focus < 2)
+                if ((rb == false && lb == false) || characterStats._focus < 2)
                 {
                     isSpellcasting = false;
                     enableIK = false;
@@ -673,7 +640,7 @@ namespace LoL
                 canAttack = false;
                 inAction = true;
                 isSpellcasting = false;
-               
+
                 string targetAnim = spellTargetAnim;
                 anim.SetBool(StaticStrings.mirror, spellIsMirrored);
                 PlayAnimation(targetAnim);
@@ -730,28 +697,28 @@ namespace LoL
             origin.y += 1;
             Vector3 rayDir = transform.forward;
             RaycastHit hit;
-            if(Physics.Raycast(origin,rayDir, out hit,3,ignoreLayers))
+            if (Physics.Raycast(origin, rayDir, out hit, 3, ignoreLayers))
             {
                 parryTarget = hit.transform.GetComponentInParent<EnemyStates>();
             }
 
             if (parryTarget == null)
-              return false;
+                return false;
 
             if (parryTarget.parriedBy == null)
                 return false;
 
-      /*      float dis = Vector3.Distance(parryTarget.transform.position, transform.position);
+            /*      float dis = Vector3.Distance(parryTarget.transform.position, transform.position);
 
-            if (dis > 3)
-                return false;*/
+                  if (dis > 3)
+                      return false;*/
 
             Vector3 dir = parryTarget.transform.position - transform.position;
             dir.Normalize();
             dir.y = 0;
             float angle = Vector3.Angle(transform.forward, dir);
 
-            if(angle < 60)
+            if (angle < 60)
             {
                 Vector3 targetPosition = -dir * parryOffset;
                 targetPosition += parryTarget.transform.position;
@@ -917,10 +884,10 @@ namespace LoL
             {
                 a_hook.rm_multi = 1.3f;
             }
-          
+
 
             anim.SetFloat(StaticStrings.vertical, v);
-            anim.SetFloat(StaticStrings.horizontal,h);
+            anim.SetFloat(StaticStrings.horizontal, h);
 
             PlayAnimation(StaticStrings.Rolls);
             isBlocking = false;
@@ -980,14 +947,14 @@ namespace LoL
             float dis = toGround + 0.3f;
             RaycastHit hit;
             Debug.DrawRay(origin, dir * dis);
-            if(Physics.Raycast(origin,dir,out hit, dis, ignoreForGroundCheck))
+            if (Physics.Raycast(origin, dir, out hit, dis, ignoreForGroundCheck))
             {
                 r = true;
                 Vector3 targetPosition = hit.point;
                 transform.position = targetPosition;
             }
 
-            if(r && !prevGround)
+            if (r && !prevGround)
             {
                 Land();
             }
@@ -1007,13 +974,13 @@ namespace LoL
             canAttack = false;
             inAction = true;
             isBlocking = false;
-           
+
             if (moveAmount == 0)
             {
                 anim.Play(StaticStrings.Jump_land);
             }
             else
-            {         
+            {
                 if (moveDir == Vector3.zero)
                     moveDir = transform.forward;
                 Quaternion targetRot = Quaternion.LookRotation(moveDir);
@@ -1031,7 +998,7 @@ namespace LoL
 
         public void InteractLogic()
         {
-            if(pickManager.interCandidate.actionType == UIActionType.talk)
+            if (pickManager.interCandidate.actionType == UIActionType.talk)
             {
                 pickManager.interCandidate.InteractActual();
                 return;
@@ -1040,15 +1007,15 @@ namespace LoL
 
             Interactions inter = ResourcesManager.singleton.GetInteraction(pickManager.interCandidate.interactionId);
 
-            if(inter.oneShot)
+            if (inter.oneShot)
             {
-                if(pickManager.inters.Contains(pickManager.interCandidate))
+                if (pickManager.inters.Contains(pickManager.interCandidate))
                 {
                     pickManager.inters.Remove(pickManager.interCandidate);
                 }
             }
 
-            if(!string.IsNullOrEmpty(inter.specialEvent))
+            if (!string.IsNullOrEmpty(inter.specialEvent))
             {
                 SessionManager.singleton.PlayEvent(inter.specialEvent);
             }
@@ -1115,10 +1082,10 @@ namespace LoL
 
             if (isTwoHanded)
             {
-                anim.CrossFade(w.th_idle,0.2f);
+                anim.CrossFade(w.th_idle, 0.2f);
                 actionManager.UpdateActionsTwoHanded();
 
-                if(isRight)
+                if (isRight)
                 {
                     if (inventoryManager.leftHandWeapon != null)
                         inventoryManager.leftHandWeapon.weaponModel.SetActive(false);
@@ -1133,7 +1100,7 @@ namespace LoL
             {
                 string targetAnim = w.oh_idle;
                 targetAnim += (isRight) ? StaticStrings._r : StaticStrings._l;
-                anim.CrossFade(targetAnim,0.2f);
+                anim.CrossFade(targetAnim, 0.2f);
                 anim.Play(StaticStrings.equipWeapon_oh);
                 actionManager.UpdateActionsOneHanded();
 
@@ -1162,7 +1129,7 @@ namespace LoL
 
         public void MonitorStats()
         {
-            if(run && moveAmount > 0)
+            if (run && moveAmount > 0)
             {
                 characterStats._stamina -= delta * 5;
             }
@@ -1200,7 +1167,7 @@ namespace LoL
 
         public void DoDamage(AIAttacks a)
         {
-            if(isInvicible)
+            if (isInvicible)
                 return;
 
             int damage = 20;
@@ -1218,7 +1185,7 @@ namespace LoL
                 anim.Play(tA);
             }
 
-           
+
             canRotate = false;
             anim.SetBool(StaticStrings.onEmpty, false);
             canMove = false;
@@ -1257,7 +1224,7 @@ namespace LoL
             anim.applyRootMotion = true;
         }
 
-       
-    }
 
+    }
 }
+

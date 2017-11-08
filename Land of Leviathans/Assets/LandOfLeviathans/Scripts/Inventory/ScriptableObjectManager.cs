@@ -6,7 +6,7 @@ using UnityEngine;
 using System.IO;
 using UnityEditor;
 
-namespace SA
+namespace LoL
 {
     public static class ScriptableObjectManager 
     {       

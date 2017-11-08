@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SA.UI
+namespace LoL.UI
 {
     public class EquipmentSlot : MonoBehaviour
     {

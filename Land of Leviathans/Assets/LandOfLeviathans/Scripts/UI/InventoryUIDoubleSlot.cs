@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace SA.UI
+namespace LoL.UI
 {
     public class InventoryUIDoubleSlot : InvetoryUISlot
     {

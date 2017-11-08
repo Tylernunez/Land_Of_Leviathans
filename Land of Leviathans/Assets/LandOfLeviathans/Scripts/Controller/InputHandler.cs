@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SA
+namespace LoL
 {
     public class InputHandler : MonoBehaviour
     {
@@ -43,7 +43,7 @@ namespace SA
         CameraManager camManager;
         UIManager uiManager;
         DialogueManager dialogManager;
-        SA.UI.InventoryUI invUI;
+        LoL.UI.InventoryUI invUI;
 
         bool isGesturesOpen;
 
@@ -66,7 +66,7 @@ namespace SA
             camManager.Init(states);
 
             uiManager = UIManager.singleton;
-            invUI = SA.UI.InventoryUI.singleton;
+            invUI = LoL.UI.InventoryUI.singleton;
             invUI.Init(states.inventoryManager);
 
             dialogManager = DialogueManager.singleton;

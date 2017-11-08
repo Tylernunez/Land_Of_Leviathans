@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using SA.UI;
+using LoL.UI;
 
-namespace SA
+namespace LoL
 {
     public class UIManager : MonoBehaviour
     {

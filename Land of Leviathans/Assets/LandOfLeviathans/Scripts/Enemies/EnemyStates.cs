@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-namespace SA
+namespace LoL
 {
     public class EnemyStates : MonoBehaviour
     {

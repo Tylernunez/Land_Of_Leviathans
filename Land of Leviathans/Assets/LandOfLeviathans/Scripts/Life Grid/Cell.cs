@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace LifeGrid
+namespace LoL
 {
     public class Cell
     {

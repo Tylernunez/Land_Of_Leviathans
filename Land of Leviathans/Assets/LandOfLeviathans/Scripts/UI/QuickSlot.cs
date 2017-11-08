@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-namespace SA.UI
+namespace LoL.UI
 {
     public class QuickSlot : MonoBehaviour
     {

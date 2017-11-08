@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using SA;
+using LoL;
 
-namespace SA.UI
+namespace LoL.UI
 {
     public class InventoryUI : MonoBehaviour
     {

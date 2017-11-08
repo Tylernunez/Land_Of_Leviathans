@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace SA.Utilities
+namespace LoL.Utilities
 {
     [ExecuteInEditMode]
     public class IconMaker : MonoBehaviour

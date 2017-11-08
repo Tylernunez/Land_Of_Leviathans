@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace SA.Utilities {
+namespace LoL.Utilities {
     public class Notes : MonoBehaviour
     {
         [TextArea(15, 1000)]
