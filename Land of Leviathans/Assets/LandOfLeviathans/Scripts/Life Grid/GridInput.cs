@@ -170,11 +170,12 @@ namespace LoL
         {   
             //Handle Movement for state manager, may not be valid for Grid purposes
             
+            /*
             Vector3 v = vertical * camManager.transform.forward;
             Vector3 h = horizontal * camManager.transform.right;
             states.moveDir = (v + h).normalized;
             float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
-            
+            */
             //use m to move character
 
         }
