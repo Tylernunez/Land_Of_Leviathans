@@ -133,7 +133,7 @@ namespace LoL
             ui.InitSouls(characterStats._souls);
             prevGround = true;
 
-            DialogueManager.singleton.Init(this.transform);
+            DialogManager.singleton.Init(this.transform);
             onEmpty = true;
 
         }

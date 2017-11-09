@@ -42,7 +42,7 @@ namespace LoL
         StateManager states;
         CameraManager camManager;
         UIManager uiManager;
-        DialogueManager dialogManager;
+        DialogManager dialogueManager;
         LoL.UI.InventoryUI invUI;
 
         bool isGesturesOpen;
@@ -69,7 +69,7 @@ namespace LoL
             invUI = LoL.UI.InventoryUI.singleton;
             invUI.Init(states.inventoryManager);
 
-            dialogManager = DialogueManager.singleton;
+            dialogueManager = DialogManager.singleton;
         }
 
         void FixedUpdate()
@@ -96,7 +96,7 @@ namespace LoL
             }
             else
             {
-                if (!dialogManager.dialogueActive)
+                if (!dialogueManager.dialogueActive)
                 {
                     if (states.pickManager.itemCanidate != null || states.pickManager.interCandidate)
                     {
@@ -142,7 +142,7 @@ namespace LoL
                 }
             }
 
-            dialogManager.Tick(a_input);
+            dialogueManager.Tick(a_input);
             states.MonitorStats();
             ResetInputNStates();
 

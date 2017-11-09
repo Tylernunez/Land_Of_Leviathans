@@ -10,13 +10,14 @@ namespace LoL
     {
 
 
-        public override void OnInspectorGUI()
+       /* public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
             MapGenerator map = target as MapGenerator;
 
             map.GenerateMap();
         }
+        */
 
 
     }
