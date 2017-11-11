@@ -39,9 +39,19 @@ namespace LoL
         float rt_timer;
         float lt_timer;
 
-        GridPlayerState states;
+        public bool w;
+        public bool a;
+        public bool s;
+        public bool d;
+        bool space;
 
-        bool isGesturesOpen;
+        public bool restrictUp;
+        public bool restrictDown;
+        public bool restrictRight;
+        public bool restrictLeft;
+        public bool onLocation;
+
+        GridPlayerState states;
 
         float delta;
 
@@ -54,24 +64,8 @@ namespace LoL
         void Start()
         {
             states = GetComponent<GridPlayerState>();
-
         }
 
-        void FixedUpdate()
-        {
-            delta = Time.fixedDeltaTime;
-            GetInput();
-            HandleUI();
-        }
-
-
-        void Update()
-        {
-            delta = Time.deltaTime;
-           
-        }
-
-        
 
         void Interact()
         {
@@ -85,55 +79,56 @@ namespace LoL
             }
         }
 
-        void GetInput()
+        public void GetInput()
         {
-            vertical = Input.GetAxis(StaticStrings.Vertical);
-            horizontal = Input.GetAxis(StaticStrings.Horizontal);
+            w = Input.GetKeyDown("w");
+            a = Input.GetKeyDown("a");
+            s = Input.GetKeyDown("s");
+            d = Input.GetKeyDown("d");
+            space = Input.GetKeyDown(KeyCode.Space);
+        }
 
-
-            bool menu = Input.GetButtonDown(StaticStrings.start);
-
-            if (menu)
+        public void updateMovement()
+        {
+            if (!restrictUp && w)
             {
-                //if in menu
-                    //open UI
-                
-                //else not in menu
-                    //close UI 
+                transform.Translate(0, 1, 0, Camera.main.transform);
+                states.xPos -= 1;
+                w = false;
             }
+            if (!restrictLeft && a)
+            {
+                transform.Translate(-1, 0, 0, Camera.main.transform);
+                states.yPos -= 1;
+                a = false;
+            }
+            if (!restrictDown && s)
+            {
+                transform.Translate(0, -1, 0, Camera.main.transform);
+                states.xPos += 1;
+                s = false;
+            }
+            if (!restrictRight && d)
+            {
+                transform.Translate(1, 0, 0, Camera.main.transform);
+                states.yPos += 1;
+                d = false;
+            }
+            restrictUp = false;
+            restrictDown = false;
+            restrictRight = false;
+            restrictLeft = false;
+        }
 
-            b_input = Input.GetButton(StaticStrings.B);
-                a_input = Input.GetButtonUp(StaticStrings.A);
-                y_input = Input.GetButtonUp(StaticStrings.Y);
-                x_input = Input.GetButton(StaticStrings.X);
-                rt_input = Input.GetButton(StaticStrings.RT);
-                rt_axis = Input.GetAxis(StaticStrings.RT);
-                if (rt_axis != 0)
-                rt_input = true;
-
-                lt_input = Input.GetButton(StaticStrings.LT);
-                lt_axis = Input.GetAxis(StaticStrings.LT);
-                if (lt_axis != 0)
-                    lt_input = true;
-                rb_input = Input.GetButton(StaticStrings.RB);
-                lb_input = Input.GetButton(StaticStrings.LB);
-
-                leftAxis_down = Input.GetButtonUp(StaticStrings.L) || Input.GetKeyUp(KeyCode.Alpha6);
-                rightAxis_down = Input.GetButtonUp(StaticStrings.R) || Input.GetKeyUp(KeyCode.T);
-
-                if (b_input)
-                    b_timer += delta;
-
-                d_x = Input.GetAxis(StaticStrings.Pad_x);
-                d_y = Input.GetAxis(StaticStrings.Pad_y);
-
-                d_up = Input.GetKeyUp(KeyCode.Alpha1) || d_y > 0;
-                d_down = Input.GetKeyUp(KeyCode.Alpha2) || d_y < 0;
-                d_left = Input.GetKeyUp(KeyCode.Alpha3) || d_x < 0;
-                d_right = Input.GetKeyUp(KeyCode.Alpha4) || d_x > 0;
-
-                bool gesturesMenu = Input.GetButtonUp(StaticStrings.select);
-           
+        public void TileInteract()
+        {
+            if (space)
+            {
+                //if (onLocation)
+                //{
+                    GameSession.singleton.GenerateLocation();
+                //}
+            }
         }
 
         void HandleUI()
@@ -159,6 +154,7 @@ namespace LoL
             */
         }
 
+
         UIState curUIstate;
         enum UIState
         {
@@ -166,33 +162,6 @@ namespace LoL
         }
 
 
-        void UpdateStates()
-        {   
-            //Handle Movement for state manager, may not be valid for Grid purposes
-            
-            /*
-            Vector3 v = vertical * camManager.transform.forward;
-            Vector3 h = horizontal * camManager.transform.right;
-            states.moveDir = (v + h).normalized;
-            float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
-            */
-            //use m to move character
-
-        }
-        //Reset Input, may not be valid for Grid purposes
-        /*
-        void ResetInputNStates()
-        {
-            if (a_input)
-                a_input = false;
-
-            if (b_input == false)
-                b_timer = 0;
-            if (states.rollInput)
-                states.rollInput = false;
-            if (states.run)
-                states.run = false;
-        }
-        */
+       
     }
 }
