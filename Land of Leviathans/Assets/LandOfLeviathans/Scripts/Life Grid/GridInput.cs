@@ -95,24 +95,28 @@ namespace LoL
                 transform.Translate(0, 1, 0, Camera.main.transform);
                 states.xPos -= 1;
                 w = false;
+                GameSession.singleton.clock.Tick(1);
             }
             if (!restrictLeft && a)
             {
                 transform.Translate(-1, 0, 0, Camera.main.transform);
                 states.yPos -= 1;
                 a = false;
+                GameSession.singleton.clock.Tick(1);
             }
             if (!restrictDown && s)
             {
                 transform.Translate(0, -1, 0, Camera.main.transform);
                 states.xPos += 1;
                 s = false;
+                GameSession.singleton.clock.Tick(1);
             }
             if (!restrictRight && d)
             {
                 transform.Translate(1, 0, 0, Camera.main.transform);
                 states.yPos += 1;
                 d = false;
+                GameSession.singleton.clock.Tick(1);
             }
             restrictUp = false;
             restrictDown = false;

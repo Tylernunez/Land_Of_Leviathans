@@ -11,8 +11,8 @@ namespace LoL
         public MapGenerator worldGenerator;
         public Calendar time;
         public GridPlayerState controller;
+        public Clock clock;
         GameObject session;
-
 
         public static GameSession singleton;
         void Awake()
@@ -30,6 +30,7 @@ namespace LoL
             worldGenerator.GenerateMap();
             worldGenerator.EstablishBoundaries();
             worldGenerator.InitPlayer(controller);
+
         }
 
         public void Start()
@@ -42,6 +43,7 @@ namespace LoL
             controller.inputhandler.updateMovement();
             controller.inputhandler.TileInteract();
             worldGenerator.PoliceBoundaries(controller);
+            clock.TrackTime();
         }
 
         public void GenerateLocation()
@@ -56,6 +58,38 @@ namespace LoL
             }
         }
 
+    }
+
+    [System.Serializable]
+    public class Clock
+    {
+        public int hour;
+        public int day;
+        public int week;
+
+        public void Tick()
+        {
+
+        }
+
+        public void Tick(int hours)
+        {
+            this.hour += hours;
+        }
+
+        public void TrackTime()
+        {
+            if(this.hour >= 24)
+            {
+                this.day++;
+                this.hour = 0;
+            }
+            if(this.day >= 7)
+            {
+                this.week++;
+                this.day = 0;
+            }
+        }
     }
 }
 
