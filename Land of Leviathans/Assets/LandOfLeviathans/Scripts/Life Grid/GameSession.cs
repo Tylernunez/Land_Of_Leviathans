@@ -14,6 +14,7 @@ namespace LoL
         public Clock clock;
         public Village village;
         public SessionToken token;
+        public DM dm;
         GameObject session;
 
         public static GameSession singleton;
@@ -28,6 +29,8 @@ namespace LoL
         {
             token = FindObjectOfType<SessionToken>();
             worldGenerator = GetComponentInChildren<MapGenerator>();
+            clock = GetComponentInChildren<Clock>();
+            dm = GetComponentInChildren<DM>();
             controller = FindObjectOfType<GridPlayerState>();
             controller.Init();
             worldGenerator.GenerateMap();
@@ -53,7 +56,7 @@ namespace LoL
         public void GenerateLocation()
         {
             MapGenerator.Tile location = worldGenerator.allTileCoords.Find(i => i.x == controller.xPos && i.y == controller.yPos);
-            if(location.hasStructure || location.hasInhabitants)
+            if(location.hasStructure)
             {
                 //Unload LifeGrid
                 session.SetActive(false);
@@ -73,39 +76,6 @@ namespace LoL
             }
         }
 
-    }
-
-    [System.Serializable]
-    public class Clock
-    {
-        public int hour;
-        public int day;
-        public int week;
-
-        public void Tick()
-        {
-
-        }
-
-        public void Tick(int hours)
-        {
-            this.hour += hours;
-            GameSession.singleton.controller.Tick();
-        }
-
-        public void TrackTime()
-        {
-            if(this.hour >= 24)
-            {
-                this.day++;
-                this.hour = 0;
-            }
-            if(this.day >= 7)
-            {
-                this.week++;
-                this.day = 0;
-            }
-        }
     }
 }
 
