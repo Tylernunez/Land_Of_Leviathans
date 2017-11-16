@@ -12,6 +12,8 @@ namespace LoL
         public Calendar time;
         public GridPlayerState controller;
         public Clock clock;
+        public Village village;
+        public SessionToken token;
         GameObject session;
 
         public static GameSession singleton;
@@ -24,13 +26,15 @@ namespace LoL
 
         public void Init()
         {
+            token = FindObjectOfType<SessionToken>();
             worldGenerator = GetComponentInChildren<MapGenerator>();
             controller = FindObjectOfType<GridPlayerState>();
             controller.Init();
             worldGenerator.GenerateMap();
             worldGenerator.EstablishBoundaries();
             worldGenerator.InitPlayer(controller);
-
+            village.Init();
+           
         }
 
         public void Start()
@@ -40,7 +44,7 @@ namespace LoL
         public void Update()
         {
             controller.inputhandler.GetInput();
-            controller.inputhandler.updateMovement();
+            controller.inputhandler.updateMovement(); 
             controller.inputhandler.TileInteract();
             worldGenerator.PoliceBoundaries(controller);
             clock.TrackTime();
@@ -54,7 +58,18 @@ namespace LoL
                 //Unload LifeGrid
                 session.SetActive(false);
                 //Load scene according to structure/inhabitants
+                token.location = location;
+                token.inOpenField = true;
                 SceneManager.LoadScene("testTile");
+                
+            }
+            if (location.isVillage)
+            {
+                session.SetActive(false);
+                token.location = location;
+                token.inVillage = true;
+                token.village = village;
+                SceneManager.LoadScene("village");
             }
         }
 
@@ -75,6 +90,7 @@ namespace LoL
         public void Tick(int hours)
         {
             this.hour += hours;
+            GameSession.singleton.controller.Tick();
         }
 
         public void TrackTime()

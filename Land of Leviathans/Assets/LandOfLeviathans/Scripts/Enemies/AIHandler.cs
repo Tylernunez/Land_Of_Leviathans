@@ -161,11 +161,7 @@ namespace LoL
             HandleCooldowns();
 
             float d2 = Vector3.Distance(states.targetDestination, target.position);
-            if (d2 > 2 || dis > sight * .5)
-                GoToTarget();
-                         
-            if (dis < 2)
-                states.agent.isStopped = true;
+            GoToTarget();
 
             if (_attack > 0)
             {
@@ -184,7 +180,11 @@ namespace LoL
                 states.anim.SetBool(StaticStrings.onEmpty, false);
                 states.canMove = false;
                 a._cool = a.cooldown;
-                states.agent.isStopped = true;
+                if (states.agent)
+                {
+                    states.agent.isStopped = true;
+                }
+                
                 states.rotateToTarget = false;
                 return;
             }

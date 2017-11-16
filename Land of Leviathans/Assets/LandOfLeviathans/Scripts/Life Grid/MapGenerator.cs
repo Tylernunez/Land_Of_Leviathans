@@ -19,9 +19,12 @@ namespace LoL
         public int seed = 10;
         System.Random rng = new System.Random();
         public int StructureChance = 10;
+        public int villageChance = 5;
+        public bool hasVillage = false;
 
 
         public Transform[] regionPrefabs = new Transform[8];
+        public Transform villagePrefab;
 
 
         public void GenerateMap()
@@ -56,6 +59,11 @@ namespace LoL
             {
                 Vector3 tilePosition = CoordToPosition(i.x, i.y);
                 Transform newTile = Instantiate(regionPrefabs[i.regionType], tilePosition, Quaternion.Euler(Vector3.right * 90)) as Transform;
+                if (i.isVillage)
+                {
+                    Transform villagePos = Instantiate(villagePrefab, tilePosition, Quaternion.Euler(Vector3.right * 90)) as Transform;
+                    GameSession.singleton.village = villagePos.gameObject.AddComponent<Village>();
+                }
                 i.tile = newTile;
                 newTile.localScale = Vector3.one * (1 - outlinePercent);
                 newTile.parent = mapHolder;
@@ -73,6 +81,11 @@ namespace LoL
                 {
                     i.hasStructure = true;
                     i.structureType = rng.Next(1, 5);
+                }
+                if(rng.Next(1,100) <= villageChance && !hasVillage && !i.isBoundary)
+                {
+                    i.isVillage = true;
+                    hasVillage = true;
                 }
                 //select prefab
             }
@@ -150,6 +163,7 @@ namespace LoL
             public bool isWest = false;
             public bool hasStructure;
             public bool hasInhabitants;
+            public bool isVillage = false;
 
             public Tile(int _x, int _y)
             {

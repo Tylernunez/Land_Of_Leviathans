@@ -20,6 +20,9 @@ namespace LoL
         [Header("States")]
         public int xPos;
         public int yPos;
+        public int health;
+        public int food;
+
 
         [HideInInspector]
         public InventoryManager inventoryManager;
@@ -28,12 +31,26 @@ namespace LoL
         public void Init()
         {
             inputhandler = this.GetComponent<GridInput>();
+            health = 100;
+            food = 10;
             //Initialize Inventory
             //Retrieve character stats
 
 
         }
 
+        public void Tick()
+        {
+            if(food >= 1)
+            {
+                --food;
+            }
+            else
+            {
+                health = health - 10;
+            }
+            
+        }
 
 
         public void preventMovement(MapGenerator.Tile location)
