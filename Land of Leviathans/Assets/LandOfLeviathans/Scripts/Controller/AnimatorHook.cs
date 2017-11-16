@@ -132,7 +132,7 @@ namespace LoL
                         v.y = rigid.velocity.y;
                 }
 
-                if (eStates)
+                if (eStates && eStates.agent)
                 {
                     //Debug.Log("v");
                     eStates.agent.velocity = v;
