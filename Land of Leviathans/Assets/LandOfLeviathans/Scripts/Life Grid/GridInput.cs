@@ -6,6 +6,9 @@ namespace LoL
 {
     public class GridInput : MonoBehaviour
     {
+        int x;
+        int y;
+
         float vertical;
         float horizontal;
         bool b_input;
@@ -92,29 +95,57 @@ namespace LoL
         {
             if (!restrictUp && w)
             {
+                x = states.xPos;
+                y = states.yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByPlayer = false;
                 transform.Translate(0, 1, 0, Camera.main.transform);
                 states.xPos -= 1;
+                x = states.xPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByPlayer = true;
                 w = false;
                 GameSession.singleton.clock.Tick(1);
             }
             if (!restrictLeft && a)
             {
+                x = states.xPos;
+                y = states.yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByPlayer = false;
                 transform.Translate(-1, 0, 0, Camera.main.transform);
                 states.yPos -= 1;
+                y = states.yPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByPlayer = true;
                 a = false;
                 GameSession.singleton.clock.Tick(1);
             }
             if (!restrictDown && s)
             {
+                x = states.xPos;
+                y = states.yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByPlayer = false;
                 transform.Translate(0, -1, 0, Camera.main.transform);
                 states.xPos += 1;
+                x = states.xPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByPlayer = true;
                 s = false;
                 GameSession.singleton.clock.Tick(1);
             }
             if (!restrictRight && d)
             {
+                x = states.xPos;
+                y = states.yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByPlayer = false;
                 transform.Translate(1, 0, 0, Camera.main.transform);
                 states.yPos += 1;
+                y = states.yPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByPlayer = true;
                 d = false;
                 GameSession.singleton.clock.Tick(1);
             }

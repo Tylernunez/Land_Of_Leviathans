@@ -77,7 +77,7 @@ namespace LoL
                 //select prefab
             }
         }
-        Vector3 CoordToPosition(int x, int y)
+        public Vector3 CoordToPosition(int x, int y)
         {
             return new Vector3(-mapSize.x / 2 + 0.5f + x, 0, -mapSize.y / 2 + 0.5f + y);
         }
@@ -130,6 +130,7 @@ namespace LoL
             int x = Random.Range(0, (int)mapSize.x);
             int y = Random.Range(0, (int)mapSize.y);
             Tile location = allTileCoords.Find(i => i.x == x && i.y == y);
+
             controller.transform.position = location.tile.transform.position;
             controller.xPos = x;
             controller.yPos = y;
@@ -149,7 +150,8 @@ namespace LoL
             public bool isEast = false;
             public bool isWest = false;
             public bool hasStructure;
-            public bool hasInhabitants;
+            public bool isOccupiedByNPC = false;
+            public bool isOccupiedByPlayer = false;
 
             public Tile(int _x, int _y)
             {

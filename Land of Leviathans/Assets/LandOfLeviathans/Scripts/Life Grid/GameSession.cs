@@ -12,6 +12,7 @@ namespace LoL
         public Calendar time;
         public GridPlayerState controller;
         public Clock clock;
+        public DM dm;
         GameObject session;
 
         public static GameSession singleton;
@@ -25,12 +26,14 @@ namespace LoL
         public void Init()
         {
             worldGenerator = GetComponentInChildren<MapGenerator>();
+            clock = GetComponentInChildren<Clock>();
+            dm = GetComponentInChildren<DM>();
             controller = FindObjectOfType<GridPlayerState>();
             controller.Init();
             worldGenerator.GenerateMap();
             worldGenerator.EstablishBoundaries();
             worldGenerator.InitPlayer(controller);
-
+            
         }
 
         public void Start()
@@ -49,7 +52,7 @@ namespace LoL
         public void GenerateLocation()
         {
             MapGenerator.Tile location = worldGenerator.allTileCoords.Find(i => i.x == controller.xPos && i.y == controller.yPos);
-            if(location.hasStructure || location.hasInhabitants)
+            if(location.hasStructure)
             {
                 //Unload LifeGrid
                 session.SetActive(false);
@@ -58,38 +61,6 @@ namespace LoL
             }
         }
 
-    }
-
-    [System.Serializable]
-    public class Clock
-    {
-        public int hour;
-        public int day;
-        public int week;
-
-        public void Tick()
-        {
-
-        }
-
-        public void Tick(int hours)
-        {
-            this.hour += hours;
-        }
-
-        public void TrackTime()
-        {
-            if(this.hour >= 24)
-            {
-                this.day++;
-                this.hour = 0;
-            }
-            if(this.day >= 7)
-            {
-                this.week++;
-                this.day = 0;
-            }
-        }
     }
 }
 
