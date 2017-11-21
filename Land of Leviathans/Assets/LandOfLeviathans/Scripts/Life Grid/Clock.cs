@@ -19,7 +19,8 @@ namespace LoL
             public void Tick(int hours)
             {
                 this.hour += hours;
-
+                GameSession.singleton.controller.Tick();
+                GameSession.singleton.dm.Tick();
                 
 
                 int chanceToSpawnMonster = Random.Range(0, 30);

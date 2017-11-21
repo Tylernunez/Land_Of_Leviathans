@@ -77,10 +77,12 @@ namespace LoL
             enTarget.Init(this);
 
             rigid = GetComponent<Rigidbody>();
-            if (!SessionToken.singleton.inOpenField)
+
+            if (!SessionManager.singleton)
             {
                 agent = GetComponent<NavMeshAgent>();
             }
+            
             
             //rigid.isKinematic = true;
 

@@ -39,6 +39,8 @@ namespace LoL
         float rt_timer;
         float lt_timer;
 
+        public bool disableInput;
+
         StateManager states;
         CameraManager camManager;
         UIManager uiManager;
@@ -178,37 +180,39 @@ namespace LoL
 
         void GetInput()
         {
-            vertical = Input.GetAxis(StaticStrings.Vertical);
-            horizontal = Input.GetAxis(StaticStrings.Horizontal);
-
-            //  if (invUI.isMenu)
-            //{ 
-
-            bool menu = Input.GetButtonUp(StaticStrings.start);
-
-            if (menu)
+            if (!disableInput)
             {
-                invUI.isMenu = !invUI.isMenu;
+                vertical = Input.GetAxis(StaticStrings.Vertical);
+                horizontal = Input.GetAxis(StaticStrings.Horizontal);
 
-                if (invUI.isMenu)
-                {
-                    isGesturesOpen = false;
-                    invUI.OpenUI();
-                }
-                else
-                {
-                    invUI.CloseUI();
-                }
-            }
+                //  if (invUI.isMenu)
+                //{ 
 
-            b_input = Input.GetButton(StaticStrings.B);
+                bool menu = Input.GetButtonUp(StaticStrings.start);
+
+                if (menu)
+                {
+                    invUI.isMenu = !invUI.isMenu;
+
+                    if (invUI.isMenu)
+                    {
+                        isGesturesOpen = false;
+                        invUI.OpenUI();
+                    }
+                    else
+                    {
+                        invUI.CloseUI();
+                    }
+                }
+
+                b_input = Input.GetButton(StaticStrings.B);
                 a_input = Input.GetButtonUp(StaticStrings.A);
                 y_input = Input.GetButtonUp(StaticStrings.Y);
                 x_input = Input.GetButton(StaticStrings.X);
                 rt_input = Input.GetButton(StaticStrings.RT);
                 rt_axis = Input.GetAxis(StaticStrings.RT);
                 if (rt_axis != 0)
-                rt_input = true;
+                    rt_input = true;
 
                 lt_input = Input.GetButton(StaticStrings.LT);
                 lt_axis = Input.GetAxis(StaticStrings.LT);
@@ -232,13 +236,15 @@ namespace LoL
                 d_right = Input.GetKeyUp(KeyCode.Alpha4) || d_x > 0;
 
                 bool gesturesMenu = Input.GetButtonUp(StaticStrings.select);
-             
+
 
                 if (gesturesMenu)
                 {
                     isGesturesOpen = !isGesturesOpen;
                 }
-            //}
+            }
+
+           
 
            
            
@@ -319,60 +325,71 @@ namespace LoL
 
         void UpdateStates()
         {
-            states.horizontal = horizontal;
-            states.vertical = vertical;
-
-            Vector3 v = vertical * camManager.transform.forward;
-            Vector3 h = horizontal * camManager.transform.right;
-            states.moveDir = (v + h).normalized;
-            float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
-            states.moveAmount = Mathf.Clamp01(m);
-
-           // if (invUI.isMenu)
-             //   return;
-
-            if (x_input)
-                b_input = false;
-
-            if(b_input && b_timer > 0.5f)
+            if (!disableInput)
             {
-                states.run = (states.moveAmount > 0) && states.characterStats._stamina > 0;
-            }
+                states.horizontal = horizontal;
+                states.vertical = vertical;
 
-            if(states.run)
-            {
-                if(leftAxis_down)
+                Vector3 v = vertical * camManager.transform.forward;
+                Vector3 h = horizontal * camManager.transform.right;
+                states.moveDir = (v + h).normalized;
+                float m = Mathf.Abs(horizontal) + Mathf.Abs(vertical);
+                states.moveAmount = Mathf.Clamp01(m);
+
+                // if (invUI.isMenu)
+                //   return;
+
+                if (x_input)
+                    b_input = false;
+
+                if (b_input && b_timer > 0.5f)
                 {
-                    states.Jump();
-                    //jump
+                    states.run = (states.moveAmount > 0) && states.characterStats._stamina > 0;
                 }
-            }
 
-            if (b_input == false && b_timer > 0 && b_timer < 0.5f)
-                states.rollInput = true;
-
-            states.itemInput = x_input;
-            states.rt = rt_input;
-            states.lt = lt_input;
-            states.rb = rb_input;
-            states.lb = lb_input;
-
-            if(y_input)
-            {
-                if (states.pickManager.itemCanidate && states.pickManager.interCandidate)
+                if (states.run)
                 {
-                    preferItem = !preferItem;
+                    if (leftAxis_down)
+                    {
+                        states.Jump();
+                        //jump
+                    }
+                }
+
+                if (b_input == false && b_timer > 0 && b_timer < 0.5f)
+                    states.rollInput = true;
+
+                states.itemInput = x_input;
+                states.rt = rt_input;
+                states.lt = lt_input;
+                states.rb = rb_input;
+                states.lb = lb_input;
+
+                if (y_input)
+                {
+                    if (states.pickManager.itemCanidate && states.pickManager.interCandidate)
+                    {
+                        preferItem = !preferItem;
+                    }
+                    else
+                    {
+                        states.isTwoHanded = !states.isTwoHanded;
+                        states.HandleTwoHanded();
+                    }
+                }
+
+                if (states.lockOnTarget != null)
+                {
+                    if (states.lockOnTarget.eStates.isDead)
+                    {
+                        states.lockOn = false;
+                        states.lockOnTarget = null;
+                        states.lockOnTransform = null;
+                        camManager.lockon = false;
+                        camManager.lockonTarget = null;
+                    }
                 }
                 else
-                {
-                    states.isTwoHanded = !states.isTwoHanded;
-                    states.HandleTwoHanded();
-                }
-            }
-
-            if (states.lockOnTarget != null)
-            {
-                if (states.lockOnTarget.eStates.isDead)
                 {
                     states.lockOn = false;
                     states.lockOnTarget = null;
@@ -380,33 +397,28 @@ namespace LoL
                     camManager.lockon = false;
                     camManager.lockonTarget = null;
                 }
-            }else
-            {
-                states.lockOn = false;
-                states.lockOnTarget = null;
-                states.lockOnTransform = null;
-                camManager.lockon = false;
-                camManager.lockonTarget = null;
-            }
 
 
-            if (rightAxis_down)
-            {
-                states.lockOn = !states.lockOn;
-                states.lockOnTarget = EnemyManager.singleton.GetEnemy(transform.position);
-
-                if (states.lockOnTarget == null)
+                if (rightAxis_down)
                 {
-                    states.lockOn = false;
-                }
-                else
-                { 
-                    camManager.lockonTarget = states.lockOnTarget;
-                    states.lockOnTransform = states.lockOnTarget.GetTarget();
-                    camManager.lockonTransform = states.lockOnTransform;
-                    camManager.lockon = states.lockOn;
+                    states.lockOn = !states.lockOn;
+                    states.lockOnTarget = EnemyManager.singleton.GetEnemy(transform.position);
+
+                    if (states.lockOnTarget == null)
+                    {
+                        states.lockOn = false;
+                    }
+                    else
+                    {
+                        camManager.lockonTarget = states.lockOnTarget;
+                        states.lockOnTransform = states.lockOnTarget.GetTarget();
+                        camManager.lockonTransform = states.lockOnTransform;
+                        camManager.lockon = states.lockOn;
+                    }
                 }
             }
+
+           
         }
 
         void HandleQuickSlotChanges()

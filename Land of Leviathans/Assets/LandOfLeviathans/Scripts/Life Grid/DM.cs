@@ -9,35 +9,47 @@ namespace LoL
     {
         public GameObject Monster;
         public GameObject Merchant;
+        public List<GameObject> NPCs;
 
         public void SpawnMonster()
         {
             MapGenerator.Tile spawnLocation = CheckForOccupancy();
-            if (spawnLocation != null)
+            if (spawnLocation != null && spawnLocation.isBoundary)
             {
-                int x = (int)spawnLocation.x;
-                int y = (int)spawnLocation.y;
-                Vector3 npcPosition = GameSession.singleton.worldGenerator.CoordToPosition(x, y);
+                Vector3 npcPosition = GameSession.singleton.worldGenerator.CoordToPosition(spawnLocation.x, spawnLocation.y);
                 GameObject newNPC = Instantiate(Monster, npcPosition, Quaternion.Euler(Vector3.right * 90));
                 newNPC.transform.position = spawnLocation.tile.transform.position;
                 spawnLocation.isOccupiedByNPC = true;
+                NPC monster = newNPC.GetComponent<NPC>();
+                monster.Init(true,false);
+                NPCs.Add(newNPC);
             }
         }
 
         public void SpawnMerchant()
         {
             MapGenerator.Tile spawnLocation = CheckForOccupancy();
-            if (spawnLocation != null)
+            if (spawnLocation != null && spawnLocation.isBoundary)
             {
-                int x = (int)spawnLocation.x;
-                int y = (int)spawnLocation.y;
-                Vector3 npcPosition = GameSession.singleton.worldGenerator.CoordToPosition(x, y);
+                Vector3 npcPosition = GameSession.singleton.worldGenerator.CoordToPosition(spawnLocation.x, spawnLocation.y);
                 GameObject newNPC = Instantiate(Merchant, npcPosition, Quaternion.Euler(Vector3.right * 90));
                 newNPC.transform.position = spawnLocation.tile.transform.position;
                 spawnLocation.isOccupiedByNPC = true;
-                MerchantMovement(x, y);
+                NPC monster = newNPC.GetComponent<NPC>();
+                monster.Init(false,true);
+                NPCs.Add(newNPC);
             }
         }
+
+        public void Tick()
+        {
+            foreach(GameObject i in NPCs)
+            {
+                NPC npc = i.GetComponent<NPC>();
+                npc.updateBehavior();
+            }
+        }
+
 
         public void MerchantMovement(int x, int y)
         {

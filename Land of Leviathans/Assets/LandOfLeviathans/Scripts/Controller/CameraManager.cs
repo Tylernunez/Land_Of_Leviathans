@@ -53,61 +53,65 @@ namespace LoL
 
         public void Tick(float d)
         {
-            float h = Input.GetAxis("Mouse X");
-            float v = Input.GetAxis("Mouse Y");
-
-            float c_h = Input.GetAxis("RightAxis X");
-            float c_v = Input.GetAxis("RightAxis Y");
-
-            float targetSpeed = mouseSpeed;
-
-            changeTargetLeft = Input.GetKeyUp(KeyCode.V);
-            changeTargetRight = Input.GetKeyUp(KeyCode.B);
-
-            if (lockonTarget != null)
+            if (!InputHandler.singleton.disableInput)
             {
-                if (lockonTransform == null)
-                {
-                    lockonTransform = lockonTarget.GetTarget();
-                    states.lockOnTransform = lockonTransform;
-                }
+                float h = Input.GetAxis("Mouse X");
+                float v = Input.GetAxis("Mouse Y");
 
-                if(Mathf.Abs(c_h) > 0.6f)
+                float c_h = Input.GetAxis("RightAxis X");
+                float c_v = Input.GetAxis("RightAxis Y");
+
+                float targetSpeed = mouseSpeed;
+
+                changeTargetLeft = Input.GetKeyUp(KeyCode.V);
+                changeTargetRight = Input.GetKeyUp(KeyCode.B);
+
+                if (lockonTarget != null)
                 {
-                    if(!usedRightAxis)
+                    if (lockonTransform == null)
                     {
-                        lockonTransform = lockonTarget.GetTarget((c_h > 0));
+                        lockonTransform = lockonTarget.GetTarget();
                         states.lockOnTransform = lockonTransform;
-                        usedRightAxis = true;
+                    }
+
+                    if (Mathf.Abs(c_h) > 0.6f)
+                    {
+                        if (!usedRightAxis)
+                        {
+                            lockonTransform = lockonTarget.GetTarget((c_h > 0));
+                            states.lockOnTransform = lockonTransform;
+                            usedRightAxis = true;
+                        }
+                    }
+
+                    if (changeTargetLeft || changeTargetRight)
+                    {
+                        lockonTransform = lockonTarget.GetTarget(changeTargetLeft);
+                        states.lockOnTransform = lockonTransform;
                     }
                 }
 
-                if(changeTargetLeft || changeTargetRight)
+                if (usedRightAxis)
                 {
-                    lockonTransform = lockonTarget.GetTarget(changeTargetLeft);
-                    states.lockOnTransform = lockonTransform;
+                    if (Mathf.Abs(c_h) < 0.6f)
+                    {
+                        usedRightAxis = false;
+                    }
                 }
-            }
 
-            if(usedRightAxis)
-            {
-                if(Mathf.Abs(c_h) < 0.6f)
+
+                if (c_h != 0 || c_v != 0)
                 {
-                    usedRightAxis = false;
+                    h = c_h;
+                    v = -c_v;
+                    targetSpeed = controllerSpeed;
                 }
+
+                FollowTarget(d);
+                HandleRotations(d, v, h, targetSpeed);
+                HandlePivotPosition();
             }
-
-
-            if(c_h != 0 || c_v != 0)
-            {
-                h = c_h;
-                v = -c_v;
-                targetSpeed = controllerSpeed;
-            }
-
-            FollowTarget(d);
-            HandleRotations(d, v, h, targetSpeed);
-            HandlePivotPosition();
+            
         }
 
         void FollowTarget(float d)

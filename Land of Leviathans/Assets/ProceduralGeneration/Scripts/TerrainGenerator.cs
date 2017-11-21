@@ -34,10 +34,14 @@ namespace LoL
         Dictionary<Vector2, TerrainChunk> terrainChunkDictionary = new Dictionary<Vector2, TerrainChunk>();
         List<TerrainChunk> visibleTerrainChunks = new List<TerrainChunk>();
 
+        private void Awake()
+        {
+            GenerateTile(SessionToken.singleton.location);
+        }
 
         void Start()
         {
-            GenerateTile(SessionToken.singleton.location);
+
             textureSettings.ApplyToMaterial(mapMaterial);
             textureSettings.UpdateMeshHeights(mapMaterial, heightMapSettings.minHeight, heightMapSettings.maxHeight);
 
@@ -119,8 +123,8 @@ namespace LoL
 
         public void GenerateTile(MapGenerator.Tile location)
         {
-            this.heightMapSettings = heights[location.regionType];
             this.textureSettings = textures[location.regionType];
+            this.heightMapSettings = heights[location.regionType];   
         }
 
     }

@@ -15,6 +15,7 @@ namespace LoL
         public Village village;
         public SessionToken token;
         public DM dm;
+        GridUI ui;
         GameObject session;
 
         public static GameSession singleton;
@@ -37,6 +38,8 @@ namespace LoL
             worldGenerator.EstablishBoundaries();
             worldGenerator.InitPlayer(controller);
             village.Init();
+            ui = FindObjectOfType<GridUI>();
+            ui.Init(controller);
            
         }
 
