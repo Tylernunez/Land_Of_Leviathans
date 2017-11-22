@@ -8,7 +8,7 @@ namespace LoL
     {
         void OnTriggerEnter(Collider other)
         {
-            EnemyStates es = other.GetComponentInParent<EnemyStates>();
+            NPCstates es = other.GetComponentInParent<NPCstates>();
             if(es != null)
             {
                 es.DoDamage_();

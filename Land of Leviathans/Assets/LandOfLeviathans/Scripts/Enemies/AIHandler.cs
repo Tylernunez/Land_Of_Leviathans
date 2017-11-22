@@ -7,7 +7,7 @@ namespace LoL
     public class AIHandler : MonoBehaviour
     {
         public AIAttacks[] ai_attacks;
-        public EnemyStates states;
+        public NPCstates states;
 
         public StateManager en_states;
         public Transform target;
@@ -57,7 +57,7 @@ namespace LoL
         void Start()
         {
             if (states == null)
-                states = GetComponent<EnemyStates>();
+                states = GetComponent<NPCstates>();
 
             states.Init();
             InitDamageColliders();

@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 namespace LoL
 {
-    public class EnemyStates : MonoBehaviour
+    public class NPCstates : MonoBehaviour
     {
         [Header("Stats")]
         public int health;
@@ -53,7 +53,7 @@ namespace LoL
 
         //References
         public Animator anim;
-        EnemyTarget enTarget;
+        NPCtargets enTarget;
         AnimatorHook a_hook;
         public Rigidbody rigid;
         public NavMeshAgent agent;
@@ -73,7 +73,7 @@ namespace LoL
         {
             health = 100;
             anim = GetComponentInChildren<Animator>();
-            enTarget = GetComponent<EnemyTarget>();
+            enTarget = GetComponent<NPCtargets>();
             enTarget.Init(this);
 
             rigid = GetComponent<Rigidbody>();
@@ -95,7 +95,7 @@ namespace LoL
             parryIsOn = false;
             ignoreLayers = ~(1 << 9);
 
-            EnemyManager.singleton.enemyTargets.Add(transform.GetComponent<EnemyTarget>());
+            EnemyManager.singleton.enemyTargets.Add(transform.GetComponent<NPCtargets>());
         }
 
         void InitRagdoll()

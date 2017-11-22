@@ -6,11 +6,11 @@ namespace LoL
 {
     public class EnemyManager : MonoBehaviour
     {
-        public List<EnemyTarget> enemyTargets = new List<EnemyTarget>();
+        public List<NPCtargets> enemyTargets = new List<NPCtargets>();
 
-        public EnemyTarget GetEnemy(Vector3 from)
+        public NPCtargets GetEnemy(Vector3 from)
         {
-            EnemyTarget r = null;
+            NPCtargets r = null;
             float minDist = float.MaxValue;
             for (int i = 0; i < enemyTargets.Count; i++)
             {

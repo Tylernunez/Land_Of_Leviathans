@@ -18,6 +18,10 @@ namespace LoL
         GridUI ui;
         GameObject session;
 
+
+        public List<string> monsterNames;
+        public List<string> menNames;
+
         public static GameSession singleton;
         void Awake()
         {

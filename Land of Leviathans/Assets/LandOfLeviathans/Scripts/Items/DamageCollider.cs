@@ -7,7 +7,7 @@ namespace LoL
     public class DamageCollider : MonoBehaviour
     {
         StateManager states;
-        EnemyStates estates;
+        NPCstates estates;
 
         public void InitPlayer(StateManager st)
         {
@@ -16,7 +16,7 @@ namespace LoL
             gameObject.SetActive(false);
         }
 
-        public void InitEnemy(EnemyStates st)
+        public void InitEnemy(NPCstates st)
         {
             estates = st;
             gameObject.layer = 9;
@@ -27,7 +27,7 @@ namespace LoL
         {
             if (states)
             {
-                EnemyStates es = other.transform.GetComponentInParent<EnemyStates>();
+                NPCstates es = other.transform.GetComponentInParent<NPCstates>();
 
                 if (es != null)
                 {

@@ -12,7 +12,7 @@ namespace LoL
         public float controllerSpeed = 7;
 
         public Transform target;
-        public EnemyTarget lockonTarget;
+        public NPCtargets lockonTarget;
         public Transform lockonTransform;
 
         [HideInInspector]

@@ -8,7 +8,7 @@ namespace LoL
     {
         Dictionary<string, int> s_effects = new Dictionary<string, int>();
 
-        public void UseSpellEffect(string id, StateManager c, EnemyStates e = null)
+        public void UseSpellEffect(string id, StateManager c, NPCstates e = null)
         {
             int index = GetEffect(id);
             
@@ -80,7 +80,7 @@ namespace LoL
             c.spellCast_loop = c.inventoryManager.EmitSpellParticle;
         }
 
-        void OnFire(StateManager c, EnemyStates e)
+        void OnFire(StateManager c, NPCstates e)
         {
             if(c != null)
             {

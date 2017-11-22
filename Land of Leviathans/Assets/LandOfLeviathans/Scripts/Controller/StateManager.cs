@@ -53,7 +53,7 @@ namespace LoL
         public bool isInvicible;
 
         [Header("Other")]
-        public EnemyTarget lockOnTarget;
+        public NPCtargets lockOnTarget;
         public Transform lockOnTransform;
         public AnimationCurve roll_curve;
         //public EnemyStates parryTarget;
@@ -725,14 +725,14 @@ namespace LoL
             if (slot.canParry == false)
                 return false;
 
-            EnemyStates parryTarget = null;
+            NPCstates parryTarget = null;
             Vector3 origin = transform.position;
             origin.y += 1;
             Vector3 rayDir = transform.forward;
             RaycastHit hit;
             if(Physics.Raycast(origin,rayDir, out hit,3,ignoreLayers))
             {
-                parryTarget = hit.transform.GetComponentInParent<EnemyStates>();
+                parryTarget = hit.transform.GetComponentInParent<NPCstates>();
             }
 
             if (parryTarget == null)
@@ -786,14 +786,14 @@ namespace LoL
             if (slot.canBackStab == false)
                 return false;
 
-            EnemyStates backstab = null;
+            NPCstates backstab = null;
             Vector3 origin = transform.position;
             origin.y += 1;
             Vector3 rayDir = transform.forward;
             RaycastHit hit;
             if (Physics.Raycast(origin, rayDir, out hit, 1, ignoreLayers))
             {
-                backstab = hit.transform.GetComponentInParent<EnemyStates>();
+                backstab = hit.transform.GetComponentInParent<NPCstates>();
             }
 
             if (backstab == null)

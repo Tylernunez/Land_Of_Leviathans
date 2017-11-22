@@ -23,9 +23,6 @@ namespace LoL
         public int gold;
         public int movespeed;
 
-        public List<string> monsterNames;
-        public List<string> menNames;
-
 
         System.Random rng = new System.Random();
 
@@ -34,8 +31,9 @@ namespace LoL
         {
             if (isMonster)
             {
-                int r = rng.Next(monsterNames.Count);
-                string name = ((string)monsterNames[r]);
+                this.isMonster = true;
+                int r = rng.Next(GameSession.singleton.monsterNames.Count);
+                this.name = ((string)GameSession.singleton.monsterNames[r]);
 
                 this.health = rng.Next(20, 100);
                 this.food = rng.Next(4, 10);
@@ -43,8 +41,9 @@ namespace LoL
             }
             if (isMerchant)
             {
-                int r = rng.Next(menNames.Count);
-                string name = ((string)menNames[r]);
+                this.isMerchant = true;
+                int r = rng.Next(GameSession.singleton.menNames.Count);
+                this.name = ((string)GameSession.singleton.menNames[r]);
 
                 this.health = rng.Next(20, 100);
                 this.food = rng.Next(4, 10);
@@ -54,7 +53,14 @@ namespace LoL
 
         public void updateBehavior()
         {
-
+            if (isMonster)
+            {
+                updateMonsterMovement();
+            }
+            if (isMerchant)
+            {
+                updateMerchantMovement();
+            }
         }
 
         public void preventMovement(MapGenerator.Tile location)
@@ -81,6 +87,17 @@ namespace LoL
                 inputhandler.restrictLeft = true;
             }
             */
+        }
+
+        public void updateMonsterMovement()
+        {
+            this.transform.Translate(0, 1, 0, Camera.main.transform);
+            Debug.Log("up!");
+        }
+        public void updateMerchantMovement()
+        {
+            this.transform.Translate(0, 1, 0, Camera.main.transform);
+            Debug.Log("up!");
         }
     }
 }

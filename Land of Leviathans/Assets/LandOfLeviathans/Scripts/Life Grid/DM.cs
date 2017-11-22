@@ -11,6 +11,7 @@ namespace LoL
         public GameObject Merchant;
         public List<GameObject> NPCs;
 
+
         public void SpawnMonster()
         {
             MapGenerator.Tile spawnLocation = CheckForOccupancy();

@@ -8,7 +8,7 @@ namespace LoL
     {
         Animator anim;
         StateManager states;
-        EnemyStates eStates;
+        NPCstates eStates;
         Rigidbody rigid;
 
         public bool jumping;
@@ -32,7 +32,7 @@ namespace LoL
 
         public bool killDelta;
 
-        public void Init(StateManager st, EnemyStates eSt)
+        public void Init(StateManager st, NPCstates eSt)
         {
             states = st;
             eStates = eSt;

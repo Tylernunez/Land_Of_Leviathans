@@ -4,17 +4,17 @@ using UnityEngine;
 
 namespace LoL
 {
-    public class EnemyTarget : MonoBehaviour
+    public class NPCtargets : MonoBehaviour
     {
         public int index;
         public List<Transform> targets = new List<Transform>();
         public List<HumanBodyBones> h_bones = new List<HumanBodyBones>();
 
-        public EnemyStates eStates;
+        public NPCstates eStates;
 
         Animator anim;
 
-        public void Init(EnemyStates st)
+        public void Init(NPCstates st)
         {
             eStates = st;
             anim = eStates.anim;

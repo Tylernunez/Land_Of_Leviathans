@@ -7,7 +7,7 @@ namespace LoL
     public class ParryCollider : MonoBehaviour
     {
         StateManager states;
-        EnemyStates eStates;
+        NPCstates eStates;
 
         public float maxTimer = 0.6f;
         float timer;
@@ -42,7 +42,7 @@ namespace LoL
             }
         }
 
-        public void InitEnemy(EnemyStates st)
+        public void InitEnemy(NPCstates st)
         {
             eStates = st;
         }
@@ -55,7 +55,7 @@ namespace LoL
 
             if (states)
             {
-                EnemyStates e_st = other.transform.GetComponentInParent<EnemyStates>();
+                NPCstates e_st = other.transform.GetComponentInParent<NPCstates>();
 
                 if (e_st != null)
                 {
