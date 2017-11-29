@@ -44,7 +44,17 @@ namespace LoL
 
         public void Tick()
         {
-            foreach(GameObject i in NPCs)
+            int chanceToSpawnMonster = Random.Range(0, 30);
+            int chanceToSpawnMerchant = Random.Range(0, 20);
+            if (chanceToSpawnMerchant == 1)
+            {
+                SpawnMerchant();
+            }
+            if (chanceToSpawnMonster == 1)
+            {
+                SpawnMonster();
+            }
+            foreach (GameObject i in NPCs)
             {
                 NPC npc = i.GetComponent<NPC>();
                 npc.updateBehavior();

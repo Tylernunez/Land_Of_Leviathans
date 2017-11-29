@@ -91,13 +91,50 @@ namespace LoL
 
         public void updateMonsterMovement()
         {
-            this.transform.Translate(0, 1, 0, Camera.main.transform);
-            Debug.Log("up!");
+            int r = rng.Next(1, 8);
+            int s = rng.Next(1, 3);
+            
+            if (r == 1) //up
+            {
+                this.transform.Translate(0, 1, 0, Camera.main.transform);
+            }
+            if (r == 2) //left
+            {
+                this.transform.Translate(-1, 0, 0, Camera.main.transform);
+            }
+            if (r == 3) //down
+            {
+                this.transform.Translate(0, -1, 0, Camera.main.transform);
+            }
+            if (r == 4) //right
+            {
+                this.transform.Translate(1, 0, 0, Camera.main.transform);
+            }
+            if (r >= 5)
+            {
+                this.food = this.food + 2;
+            }
         }
         public void updateMerchantMovement()
         {
-            this.transform.Translate(0, 1, 0, Camera.main.transform);
-            Debug.Log("up!");
+            int r = rng.Next(1, 4);
+
+            if (r == 1) //up
+            {
+                this.transform.Translate(0, 1, 0, Camera.main.transform);
+            }
+            if (r == 2) //left
+            {
+                this.transform.Translate(-1, 0, 0, Camera.main.transform);
+            }
+            if (r == 3) //down
+            {
+                this.transform.Translate(0, -1, 0, Camera.main.transform);
+            }
+            if (r == 4) //right
+            {
+                this.transform.Translate(1, 0, 0, Camera.main.transform);
+            }
         }
     }
 }

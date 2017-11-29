@@ -54,7 +54,8 @@ namespace LoL
         public void Update()
         {
             controller.inputhandler.GetInput();
-            controller.inputhandler.updateMovement(); 
+            controller.inputhandler.updateMovement();
+            controller.inputhandler.updateAction();
             controller.inputhandler.TileInteract();
             worldGenerator.PoliceBoundaries(controller);
             clock.TrackTime();
