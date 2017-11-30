@@ -165,6 +165,8 @@ namespace LoL
             public bool hasStructure;
             public bool hasInhabitants;
             public bool isVillage = false;
+            public bool isOccupiedByMonster = false;
+            public bool isOccupiedByMerchant = false;
             public bool isOccupiedByNPC = false;
             public bool isOccupiedByPlayer = false;
             public Tile(int _x, int _y)

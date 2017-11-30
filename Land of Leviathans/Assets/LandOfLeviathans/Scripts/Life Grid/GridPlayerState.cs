@@ -22,7 +22,8 @@ namespace LoL
         public int yPos;
         public int health;
         public int food;
-
+        public int energy;
+        public int gold;
 
         [HideInInspector]
         public InventoryManager inventoryManager;
@@ -32,7 +33,9 @@ namespace LoL
         {
             inputhandler = this.GetComponent<GridInput>();
             health = 100;
-            food = 10;
+            food = 20;
+            energy = 50;
+            gold = 100;
             //Initialize Inventory
             //Retrieve character stats
 
@@ -41,6 +44,10 @@ namespace LoL
 
         public void Tick()
         {
+            if (energy >= 1)
+            {
+                --energy;
+            }
             if(food >= 1)
             {
                 --food;
@@ -48,6 +55,10 @@ namespace LoL
             else
             {
                 health = health - 10;
+                if (health < 0)
+                {
+                    health = 0;
+                }
             }
             
         }

@@ -21,18 +21,6 @@ namespace LoL
                 this.hour += hours;
                 GameSession.singleton.controller.Tick();
                 GameSession.singleton.dm.Tick();
-                
-
-                int chanceToSpawnMonster = Random.Range(0, 30);
-                int chanceToSpawnMerchant = Random.Range(0, 20);
-                if (chanceToSpawnMerchant == 1)
-                {
-                GameSession.singleton.dm.SpawnMerchant();
-                }
-                if (chanceToSpawnMonster == 1)
-                {
-                GameSession.singleton.dm.SpawnMonster();
-                }
             }
 
             public void TrackTime()

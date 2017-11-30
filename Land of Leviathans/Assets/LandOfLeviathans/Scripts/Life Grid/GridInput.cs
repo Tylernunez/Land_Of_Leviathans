@@ -46,6 +46,8 @@ namespace LoL
         public bool a;
         public bool s;
         public bool d;
+        public bool one;
+        public bool two;
         bool space;
 
         public bool restrictUp;
@@ -88,12 +90,14 @@ namespace LoL
             a = Input.GetKeyDown("a");
             s = Input.GetKeyDown("s");
             d = Input.GetKeyDown("d");
+            one = Input.GetKeyDown("1");
+            two = Input.GetKeyDown("2");
             space = Input.GetKeyDown(KeyCode.Space);
         }
 
         public void updateMovement()
         {
-            if (!restrictUp && w)
+            if (!restrictUp && w && states.energy > 0)
             {
                 x = states.xPos;
                 y = states.yPos;
@@ -107,7 +111,7 @@ namespace LoL
                 w = false;
                 GameSession.singleton.clock.Tick(1);
             }
-            if (!restrictLeft && a)
+            if (!restrictLeft && a && states.energy > 0)
             {
                 x = states.xPos;
                 y = states.yPos;
@@ -121,7 +125,7 @@ namespace LoL
                 a = false;
                 GameSession.singleton.clock.Tick(1);
             }
-            if (!restrictDown && s)
+            if (!restrictDown && s && states.energy > 0)
             {
                 x = states.xPos;
                 y = states.yPos;
@@ -135,7 +139,7 @@ namespace LoL
                 s = false;
                 GameSession.singleton.clock.Tick(1);
             }
-            if (!restrictRight && d)
+            if (!restrictRight && d && states.energy > 0)
             {
                 x = states.xPos;
                 y = states.yPos;
@@ -153,6 +157,52 @@ namespace LoL
             restrictDown = false;
             restrictRight = false;
             restrictLeft = false;
+        }
+
+        public void updateAction()
+        {
+            int food = states.food;
+            int health = states.health;
+            int energy = states.energy;
+
+            if (one && food < 21 && states.energy > 0) //forage - should change to be matched with the player's "strength" possibly
+            {
+                if (states.food == 20)
+                {
+                    Debug.Log("cant forage food is full");
+                }
+                if (states.food < 20)
+                {
+                    states.food = food + 2;
+                    GameSession.singleton.clock.Tick(1);
+                }
+                if (states.food > 20) // might not be necessary
+                {
+                    states.food = 20;
+                }
+            }
+            if (two && health < 101 && states.food > 0) //rest - gives 10 health plus full energy
+            {
+                if (states.health == 100 && energy != 50)
+                {
+                    states.energy = energy + 11;
+                    GameSession.singleton.clock.Tick(8);
+                }
+                if (states.health < 100)
+                {
+                    states.health = health + 10;
+                    states.energy = energy + 11;
+                    GameSession.singleton.clock.Tick(8);
+                }
+                if (states.health > 100) //meant to limit max
+                {
+                    states.health = 100;
+                }
+                if (states.energy > 50)
+                {
+                    states.energy = 50;
+                }
+            }
         }
 
         public void TileInteract()

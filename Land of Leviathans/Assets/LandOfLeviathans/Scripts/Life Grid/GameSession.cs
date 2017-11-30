@@ -15,9 +15,8 @@ namespace LoL
         public Village village;
         public SessionToken token;
         public DM dm;
-        GridUI ui;
+        public GridUI ui;
         GameObject session;
-
 
         public List<string> monsterNames;
         public List<string> menNames;
@@ -54,7 +53,8 @@ namespace LoL
         public void Update()
         {
             controller.inputhandler.GetInput();
-            controller.inputhandler.updateMovement(); 
+            controller.inputhandler.updateMovement();
+            controller.inputhandler.updateAction();
             controller.inputhandler.TileInteract();
             worldGenerator.PoliceBoundaries(controller);
             clock.TrackTime();
@@ -81,8 +81,21 @@ namespace LoL
                 token.village = village;
                 SceneManager.LoadScene("village");
             }
+
+
         }
 
+        public void SellFood()
+        {
+            --singleton.controller.food;
+            ++singleton.controller.gold;
+        }
+
+        public void BuyFood()
+        {
+            --singleton.controller.gold;
+            ++singleton.controller.food;
+        }
     }
 }
 
