@@ -10,13 +10,17 @@ namespace LoL
         public List<Resource> resources = new List<Resource>();
         public int Hunger;
         public Morale morale;
+        public int xPos;
+        public int yPos;
         public List<Structure> specialBuildings = new List<Structure>();
         System.Random rng = new System.Random();
         public List<string> names = new List<string>();
 
 
-        public void Init()
+        public void Init(int xPos, int yPos)
         {
+            this.xPos = xPos;
+            this.yPos = yPos;
             names.Add("Bob");
             names.Add("Kaitlyn");
             names.Add("Egwene");

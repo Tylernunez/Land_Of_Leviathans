@@ -17,6 +17,7 @@ namespace LoL
         public DM dm;
         public GridUI ui;
         GameObject session;
+        GameObject[] zombies;
 
         public List<string> monsterNames;
         public List<string> menNames;
@@ -24,6 +25,11 @@ namespace LoL
         public static GameSession singleton;
         void Awake()
         {
+            zombies = GameObject.FindGameObjectsWithTag("zombie");
+            foreach (GameObject i in zombies)
+            {
+                Destroy(i);
+            }
             session = GameObject.FindGameObjectWithTag("GameSession");
             singleton = this;
             DontDestroyOnLoad(this);
@@ -40,7 +46,8 @@ namespace LoL
             worldGenerator.GenerateMap();
             worldGenerator.EstablishBoundaries();
             worldGenerator.InitPlayer(controller);
-            village.Init();
+            dm.Init(controller);
+            village = worldGenerator.village;
             ui = FindObjectOfType<GridUI>();
             ui.Init(controller);
            
@@ -48,6 +55,8 @@ namespace LoL
 
         public void Start()
         {
+            
+            
             Init();
         }
         public void Update()
@@ -57,6 +66,7 @@ namespace LoL
             controller.inputhandler.updateAction();
             controller.inputhandler.TileInteract();
             worldGenerator.PoliceBoundaries(controller);
+            TrackDeath();
             clock.TrackTime();
         }
 
@@ -85,6 +95,22 @@ namespace LoL
 
         }
 
+        public void TrackDeath()
+        {
+            if(controller.health <= 0)
+            {
+                ui.GameOver();
+            }
+        }
+
+        public void Restart()
+        {
+            this.gameObject.tag = "zombie";
+            session.tag = "zombie";
+
+            SceneManager.LoadScene("LifeGrid");
+        }
+
         public void SellFood()
         {
             --singleton.controller.food;
@@ -95,6 +121,12 @@ namespace LoL
         {
             --singleton.controller.gold;
             ++singleton.controller.food;
+        }
+
+        public void Rest()
+        {
+            ++singleton.controller.energy;
+            --singleton.controller.gold;
         }
     }
 }

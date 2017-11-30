@@ -21,7 +21,7 @@ namespace LoL
         public int StructureChance = 10;
         public int villageChance = 5;
         public bool hasVillage = false;
-
+        public Village village;
 
         public Transform[] regionPrefabs = new Transform[8];
         public Transform villagePrefab;
@@ -63,6 +63,7 @@ namespace LoL
                 {
                     Transform villagePos = Instantiate(villagePrefab, tilePosition, Quaternion.Euler(Vector3.right * 90)) as Transform;
                     GameSession.singleton.village = villagePos.gameObject.AddComponent<Village>();
+                    GameSession.singleton.village.Init(i.x, i.y);
                 }
                 i.tile = newTile;
                 newTile.localScale = Vector3.one * (1 - outlinePercent);

@@ -16,6 +16,8 @@ namespace LoL
         public Text Energy;
         public Text Gold;
         public GameObject Trading;
+        public GameObject villageUI;
+        public GameObject gameOver;
         // Use this for initialization
         void Start()
         {
@@ -78,6 +80,15 @@ namespace LoL
         {
             Trading.SetActive(false);
         }
+        public void EnableVillage()
+        {
+            villageUI.SetActive(true);
+        }
+
+        public void DisableVillage()
+        {
+            villageUI.SetActive(false);
+        }
 
         public string determineRegion(int region)
         {
@@ -102,6 +113,12 @@ namespace LoL
                     return "Tundra";
             }
             return "oops";
+        }
+
+
+        public void GameOver()
+        {
+            gameOver.SetActive(true);
         }
 
     }

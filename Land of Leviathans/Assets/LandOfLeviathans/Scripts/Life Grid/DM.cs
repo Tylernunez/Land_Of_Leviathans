@@ -58,6 +58,14 @@ namespace LoL
             {
                 GameSession.singleton.ui.DisableTrading();
             }
+            if (CheckForVillage())
+            {
+                GameSession.singleton.ui.EnableVillage();
+            }
+            else
+            {
+                    GameSession.singleton.ui.DisableVillage(); 
+            }
             int chanceToSpawnMonster = Random.Range(0, 5);
             int chanceToSpawnMerchant = Random.Range(0, 5);
             if (chanceToSpawnMerchant == 1)
@@ -101,6 +109,16 @@ namespace LoL
             if (location.isOccupiedByMerchant)
             {
                 Debug.Log("you can trade");
+                return true;
+            }
+            return false;
+        }
+
+        public bool CheckForVillage()
+        {
+            MapGenerator.Tile location = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == playerData.xPos && i.y == playerData.yPos);
+            if (location.isVillage)
+            {
                 return true;
             }
             return false;
