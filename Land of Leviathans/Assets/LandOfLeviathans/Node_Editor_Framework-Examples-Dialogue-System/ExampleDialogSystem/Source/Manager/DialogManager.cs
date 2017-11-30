@@ -18,9 +18,10 @@ namespace LoL
         public static DialogManager singleton;
 
         public bool dialogueActive;
-        NPCStates npc_state;
         public Transform playerObject;
-        Transform origin;
+        GameObject origin;
+        float talkDistance = 5f;
+        bool resetDict;
 
         public void Init(Transform po)
         {
@@ -56,43 +57,70 @@ namespace LoL
 
         public void Tick(bool a_input)
         {
-            origin = HandleNPC();
-            if (!dialogueActive)
-                return;
-            if (origin == null)
-                return;
 
-            float d = Vector3.Distance(playerObject.transform.position, origin.transform.position);
-            if (d <= 6)
+            if (a_input)
             {
-                if (a_input)
+                origin = HandleNPC();
+                if (origin == null)
+                    return;
+                NPC npc = origin.GetComponent<NPC>();
+
+                if (!dialogueActive)
                 {
-                    //Press selected button
-                    //ShowDialogWithId(DialogId, true);
+                    if (npc)
+                    {
+                            InputHandler input = playerObject.GetComponent<InputHandler>();
+                            input.disableInput = true;
+                            dialogueActive = true;
+                            //resetDict = true;
+                            ShowDialogWithId(npc.DialogId, true);   
+                    }
                 }
+               
+                    
             }
 
            
         }
-        public Transform HandleNPC()
+        public GameObject HandleNPC()
         {
+            GameObject[] closeNPC = GameObject.FindGameObjectsWithTag("NPC");
+            GameObject closestNPC = null;
+            foreach (GameObject g in closeNPC)
+            {
+                if (!closestNPC)
+                {
+                    closestNPC = g;
+                }
+                //compare distances
+                if (Vector3.Distance(transform.position, g.transform.position) <= Vector3.Distance(transform.position, closestNPC.transform.position))
+                {
+                    closestNPC = g;
+                }
+
+            }
+            if (!closestNPC)
+            {
+                return null;
+            }
+            if (Vector3.Distance(playerObject.position, closestNPC.transform.position) <= talkDistance)
+            {
+                return closestNPC;
+            }
+
+
             return null;
         }
 
         public void ShowDialogWithId(int dialogIdToLoad, bool goBackToBeginning)
         {
-            if (_messageBoxes.ContainsKey(dialogIdToLoad))
-            {
-                return;
-            }
+
 
             DialogNodeCanvas nodeCanvas;
             if (_dialogIdTracker.TryGetValue(dialogIdToLoad, out nodeCanvas))
             {
                 nodeCanvas.ActivateDialog(dialogIdToLoad, goBackToBeginning);
             }
-            else
-                Debug.LogError("ShowDialogWithId Not found Dialog with ID : " + dialogIdToLoad);
 
             MessageBoxHud messageBox = GameObject.Instantiate(_messageBoxPrefab).GetComponent<MessageBoxHud>();
             messageBox.Construct(dialogIdToLoad, this);
@@ -139,6 +167,9 @@ namespace LoL
         public void RemoveMessageBox(int dialogId)
         {
             _messageBoxes.Remove(dialogId);
+            InputHandler input = playerObject.GetComponent<InputHandler>();
+            input.disableInput = false;
+            dialogueActive = false;
         }
 
         public void OptionSelected(int dialogId, int optionSelected)

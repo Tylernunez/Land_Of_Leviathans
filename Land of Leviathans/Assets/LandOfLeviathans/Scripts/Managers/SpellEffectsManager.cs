@@ -8,6 +8,18 @@ namespace LoL
     {
         Dictionary<string, int> s_effects = new Dictionary<string, int>();
 
+        public static SpellEffectsManager singleton;
+        void Awake()
+        {
+            singleton = this;
+
+            s_effects.Add("firebreath", 0);
+            s_effects.Add("darkshield", 1);
+            s_effects.Add("healingSmall", 2);
+            s_effects.Add("fireball", 3);
+            s_effects.Add("onFire", 4);
+        }
+
         public void UseSpellEffect(string id, StateManager c, NPCstates e = null)
         {
             int index = GetEffect(id);
@@ -94,17 +106,7 @@ namespace LoL
         }
        
 
-        public static SpellEffectsManager singleton;
-        void Awake()
-        {
-            singleton = this;
 
-            s_effects.Add("firebreath", 0);
-            s_effects.Add("darkshield", 1);
-            s_effects.Add("healingSmall", 2);
-            s_effects.Add("fireball", 3);
-            s_effects.Add("onFire", 4);
-        }
 
     }
 }

@@ -35,7 +35,7 @@ namespace LoL
         public static string run = "run";
         public static string two_handed = "two_handed";
         public static string interacting = "interacting";
-        public static string blocking = "blocking";
+        public static string isblocking = "isblocking";
         public static string isLeft = "isLeft";
         public static string canMove = "canMove";
         public static string onEmpty = "OnEmpty";

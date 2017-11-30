@@ -81,7 +81,7 @@ namespace LoL
             HandleUI();
             UpdateStates();
             states.FixedTick(delta);
-            camManager.Tick(delta);   
+            camManager.Tick(delta);
         }
 
         bool preferItem;
@@ -91,11 +91,13 @@ namespace LoL
             delta = Time.deltaTime;
             states.Tick(delta);
 
+
             if (invUI.isMenu)
             {
                 uiManager.CloseAnnounceType();
                 invUI.Tick();
             }
+            /*
             else
             {
                 if (!dialogueManager.dialogueActive)
@@ -143,6 +145,7 @@ namespace LoL
                     uiManager.CloseAnnounceType();
                 }
             }
+            */
 
             dialogueManager.Tick(a_input);
             states.MonitorStats();
@@ -150,34 +153,36 @@ namespace LoL
 
             uiManager.Tick(states.characterStats, delta);    
         }
-
+        /*
         void PickupItem()
         {
-            uiManager.OpenAnnounceType(UIActionType.pickup);
+                uiManager.OpenAnnounceType(UIActionType.pickup);
 
-            if (a_input)
-            {
-                Debug.Log("picked up");
-                Vector3 td = states.pickManager.itemCanidate.transform.position - transform.position;
-                states.SnapToRotation(td);
-                states.pickManager.PickCanidate();       
-                states.PlayAnimation(StaticStrings.pick_up);
-                a_input = false;
-            }
+                if (a_input)
+                {
+                    Debug.Log("picked up");
+                    Vector3 td = states.pickManager.itemCanidate.transform.position - transform.position;
+                    states.SnapToRotation(td);
+                    states.pickManager.PickCanidate();
+                    states.PlayAnimation(StaticStrings.pick_up);
+                    a_input = false;
+                }
+           
         }
 
         void Interact()
         {
-            uiManager.OpenAnnounceType(states.pickManager.interCandidate.actionType);
+                uiManager.OpenAnnounceType(states.pickManager.interCandidate.actionType);
 
-            if (a_input)
-            {
-                Debug.Log("interaction");
-                states.InteractLogic();
-                a_input = false;
-            }
+
+                if (a_input)
+                {
+                    Debug.Log("interaction");
+                    states.InteractLogic();
+                    a_input = false;
+                }
         }
-
+        */
         void GetInput()
         {
             if (!disableInput)
@@ -347,15 +352,6 @@ namespace LoL
                     states.run = (states.moveAmount > 0) && states.characterStats._stamina > 0;
                 }
 
-                if (states.run)
-                {
-                    if (leftAxis_down)
-                    {
-                        states.Jump();
-                        //jump
-                    }
-                }
-
                 if (b_input == false && b_timer > 0 && b_timer < 0.5f)
                     states.rollInput = true;
 
@@ -367,6 +363,8 @@ namespace LoL
 
                 if (y_input)
                 {
+                    //Two handing
+                    /*
                     if (states.pickManager.itemCanidate && states.pickManager.interCandidate)
                     {
                         preferItem = !preferItem;
@@ -376,6 +374,9 @@ namespace LoL
                         states.isTwoHanded = !states.isTwoHanded;
                         states.HandleTwoHanded();
                     }
+                    */
+
+                    states.Jump();
                 }
 
                 if (states.lockOnTarget != null)

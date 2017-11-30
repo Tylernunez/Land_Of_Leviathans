@@ -26,6 +26,7 @@ namespace LoL
 
         System.Random rng = new System.Random();
 
+        public int DialogId;
 
         public void Init(bool isMonster,bool isMerchant)
         {

@@ -24,7 +24,7 @@ namespace LoL
             {
                 Debug.Log("TestScript Update about to load dialog " + DialogIdToLoad);
                 _dialogManager.ShowDialogWithId(DialogIdToLoad, true);
-                input.disableInput = true;
+                //input.disableInput = true;
             }
 
             //Load

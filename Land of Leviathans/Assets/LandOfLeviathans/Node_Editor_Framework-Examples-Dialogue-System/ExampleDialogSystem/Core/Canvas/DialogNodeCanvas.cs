@@ -11,7 +11,7 @@ namespace LoL
         public override string canvasName { get { return "Dialog"; } }
         public string Name = "Dialog";
 
-        private Dictionary<int, BaseDialogNode> _lstActiveDialogs = new Dictionary<int, BaseDialogNode>();
+        public Dictionary<int, BaseDialogNode> _lstActiveDialogs = new Dictionary<int, BaseDialogNode>();
 
         public DialogStartNode getDialogStartNode(int dialogID)
         {

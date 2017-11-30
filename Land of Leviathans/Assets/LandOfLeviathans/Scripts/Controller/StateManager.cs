@@ -68,8 +68,6 @@ namespace LoL
         public ActionManager actionManager;
         [HideInInspector]
         public InventoryManager inventoryManager;
-        //[HideInInspector]
-        //public BoneHelper boneHelper;
         [HideInInspector]
         public PickableItemsManager pickManager;
 
@@ -135,7 +133,6 @@ namespace LoL
 
             DialogManager.singleton.Init(this.transform);
             onEmpty = true;
-
         }
 
         void SetupAnimator()
@@ -552,7 +549,7 @@ namespace LoL
         }
 
         void SpellAction(Action slot)
-        {
+        { 
             if (characterStats._stamina < slot.staminaCost)
                 return;
 
@@ -610,8 +607,8 @@ namespace LoL
 
         float cur_focusCost;
         float cur_stamCost;
-        float spellcastTime;
-        float max_spellCastTime;
+        public float spellcastTime;
+        public float max_spellCastTime;
         string spellTargetAnim;
         bool spellIsMirrored;
         SpellType curSpellType;
@@ -1203,7 +1200,7 @@ namespace LoL
             if(isInvicible)
                 return;
 
-            int damage = 20;
+            int damage = 5;
 
             characterStats._health -= damage;
 
@@ -1257,7 +1254,9 @@ namespace LoL
             anim.applyRootMotion = true;
         }
 
-       
-    }
 
+    }
 }
+
+
+

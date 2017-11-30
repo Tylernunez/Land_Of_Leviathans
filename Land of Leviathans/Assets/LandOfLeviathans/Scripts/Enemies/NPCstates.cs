@@ -18,7 +18,6 @@ namespace LoL
         public float delta;
         public float horizontal;
         public float vertical;
-        public float speed = 4;
 
         public CharacterStats characterStats;
 
@@ -77,14 +76,8 @@ namespace LoL
             enTarget.Init(this);
 
             rigid = GetComponent<Rigidbody>();
-
-            if (!SessionManager.singleton)
-            {
-                agent = GetComponent<NavMeshAgent>();
-            }
-            
-            
-            //rigid.isKinematic = true;
+            agent = GetComponent<NavMeshAgent>();
+            rigid.isKinematic = true;
 
             a_hook = anim.GetComponent<AnimatorHook>();
             if (a_hook == null)
@@ -215,30 +208,21 @@ namespace LoL
 
         public void MovementAnimation()
         {
-            float square;
-            if (agent)
-            {
-                square = agent.desiredVelocity.sqrMagnitude;
-            }
-            else
-            {
-                square = speed;
-            }
+            float square = agent.desiredVelocity.sqrMagnitude;
             float v = Mathf.Clamp(square, 0, .5f);
 
             anim.SetFloat(StaticStrings.vertical, v, 0.2f, delta);
-            /*   Vector3 desired = agent.desiredVelocity;
-               Vector3 relative = transform.InverseTransformDirection(desired);
+         /*   Vector3 desired = agent.desiredVelocity;
+            Vector3 relative = transform.InverseTransformDirection(desired);
 
-               float v = relative.z;
-               float h = relative.x;
+            float v = relative.z;
+            float h = relative.x;
 
-               v = Mathf.Clamp(v, -.5f, .5f);
-               h = Mathf.Clamp(h, -.5f, .5f);
+            v = Mathf.Clamp(v, -.5f, .5f);
+            h = Mathf.Clamp(h, -.5f, .5f);
 
-               anim.SetFloat(StaticStrings.horizontal, h, 0.2f, delta);
-               anim.SetFloat(StaticStrings.vertical, v, 0.2f, delta);*/
-
+            anim.SetFloat(StaticStrings.horizontal, h, 0.2f, delta);
+            anim.SetFloat(StaticStrings.vertical, v, 0.2f, delta);*/
         }
 
         void LookTowardsTarget()
@@ -255,19 +239,13 @@ namespace LoL
 
         public void SetDestination(Vector3 d)
         {
-            if(!hasDestination && agent)
+            if(!hasDestination)
             {
                 hasDestination = true;
                 agent.isStopped = false;
                 agent.SetDestination(d);
                 targetDestination = d;
             } 
-            else if (!hasDestination)
-            {
-                hasDestination = true;
-                targetDestination = d;
-                MoveTo(d);
-            }
         }
 
 
@@ -285,8 +263,8 @@ namespace LoL
             if (isInvicible)
                 return;
 
-            //int damage = StatsCalculations.CalculateBaseDamage(curWeapon.weaponStats, characterStats);
-            int damage = 20;
+            // int damage = StatsCalculations.CalculateBaseDamage(curWeapon.weaponStats, characterStats);
+            int damage = 5;
 
             characterStats.poise += damage;
             health -= damage;
@@ -423,11 +401,6 @@ namespace LoL
             {
                 l[i].SetActive(status);
             }
-        }
-        void MoveTo(Vector3 destination)
-        {
-            Vector3 direction = (destination - transform.position).normalized * speed;     
-            rigid.velocity = direction;       
         }
     }
 }
