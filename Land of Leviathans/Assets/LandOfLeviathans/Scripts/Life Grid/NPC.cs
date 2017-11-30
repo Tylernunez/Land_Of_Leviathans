@@ -7,6 +7,9 @@ namespace LoL
 
     public class NPC : MonoBehaviour
     {
+        int x;
+        int y;
+
         public int xPos;
         public int yPos;
         //Seems a bit subjective. :thinking:
@@ -27,7 +30,7 @@ namespace LoL
         System.Random rng = new System.Random();
 
 
-        public void Init(bool isMonster,bool isMerchant)
+        public void Init(bool isMonster,bool isMerchant, int x, int y)
         {
             if (isMonster)
             {
@@ -38,6 +41,8 @@ namespace LoL
                 this.health = rng.Next(20, 100);
                 this.food = rng.Next(4, 10);
                 this.movespeed = rng.Next(1, 3);
+                this.xPos = x;
+                this.yPos = y;
             }
             if (isMerchant)
             {
@@ -48,6 +53,8 @@ namespace LoL
                 this.health = rng.Next(20, 100);
                 this.food = rng.Next(4, 10);
                 this.movespeed = rng.Next(1, 3);
+                this.xPos = x;
+                this.yPos = y;
             }
         }
 
@@ -91,49 +98,132 @@ namespace LoL
 
         public void updateMonsterMovement()
         {
-            int r = rng.Next(1, 8);
-            int s = rng.Next(1, 3);
+            int r = rng.Next(1, 12);
             
             if (r == 1) //up
             {
+                x = xPos;
+                y = yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByMonster = false;
+                prevLocation.isOccupiedByNPC = false;
                 this.transform.Translate(0, 1, 0, Camera.main.transform);
+                xPos -= 1;
+                x = xPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByMonster = true;
+                newLocation.isOccupiedByNPC = true;
             }
             if (r == 2) //left
             {
+                x = xPos;
+                y = yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByMonster = false;
+                prevLocation.isOccupiedByNPC = false;
                 this.transform.Translate(-1, 0, 0, Camera.main.transform);
+                yPos -= 1;
+                y = yPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByMonster = true;
+                newLocation.isOccupiedByNPC = true;
             }
             if (r == 3) //down
             {
+                x = xPos;
+                y = yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByMonster = false;
+                prevLocation.isOccupiedByNPC = false;
                 this.transform.Translate(0, -1, 0, Camera.main.transform);
+                xPos += 1;
+                x = xPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByMonster = true;
+                newLocation.isOccupiedByNPC = true;
             }
             if (r == 4) //right
             {
+                x = xPos;
+                y = yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByMonster = false;
+                prevLocation.isOccupiedByNPC = false;
                 this.transform.Translate(1, 0, 0, Camera.main.transform);
+                yPos += 1;
+                y = yPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByMonster = true;
+                newLocation.isOccupiedByNPC = true;
             }
             if (r >= 5)
             {
-                this.food = this.food + 2;
+                this.food = this.food + 2; //eh?
             }
         }
         public void updateMerchantMovement()
         {
-            int r = rng.Next(1, 4);
+            int r = rng.Next(1, 12);
 
             if (r == 1) //up
             {
+                x = xPos;
+                y = yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByMerchant = false;
+                prevLocation.isOccupiedByNPC = false;
                 this.transform.Translate(0, 1, 0, Camera.main.transform);
+                xPos -= 1;
+                x = xPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByMerchant = true;
+                newLocation.isOccupiedByNPC = true;
             }
             if (r == 2) //left
             {
+                x = xPos;
+                y = yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByMerchant = false;
+                prevLocation.isOccupiedByNPC = false;
                 this.transform.Translate(-1, 0, 0, Camera.main.transform);
+                yPos -= 1;
+                y = yPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByMerchant = true;
+                newLocation.isOccupiedByNPC = true;
             }
             if (r == 3) //down
             {
+                x = xPos;
+                y = yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByMerchant = false;
+                prevLocation.isOccupiedByNPC = false;
                 this.transform.Translate(0, -1, 0, Camera.main.transform);
+                xPos += 1;
+                x = xPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByMerchant = true;
+                newLocation.isOccupiedByNPC = true;
             }
             if (r == 4) //right
             {
+                x = xPos;
+                y = yPos;
+                MapGenerator.Tile prevLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                prevLocation.isOccupiedByMerchant = false;
+                prevLocation.isOccupiedByNPC = false;
                 this.transform.Translate(1, 0, 0, Camera.main.transform);
+                yPos += 1;
+                y = yPos;
+                MapGenerator.Tile newLocation = GameSession.singleton.worldGenerator.allTileCoords.Find(i => i.x == x && i.y == y);
+                newLocation.isOccupiedByMerchant = true;
+                newLocation.isOccupiedByNPC = true;
+            }
+            if (r >= 5)
+            {
+                this.food = this.food + 2; //que?
             }
         }
     }

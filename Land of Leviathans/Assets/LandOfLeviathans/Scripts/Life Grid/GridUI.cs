@@ -14,6 +14,8 @@ namespace LoL
         public Text Health;
         public Text Hunger;
         public Text Energy;
+        public Text Gold;
+        public GameObject Trading;
         // Use this for initialization
         void Start()
         {
@@ -21,6 +23,7 @@ namespace LoL
             Health.color = Color.black;
             Hunger.color = Color.black;
             Energy.color = Color.black;
+            Gold.color = Color.black;
         }
 
         public void Init(GridPlayerState data)
@@ -39,6 +42,7 @@ namespace LoL
             Health.text = "Health: " + playerData.health;
             Hunger.text = "Food: " + playerData.food;
             Energy.text = "Energy: " + playerData.energy;
+            Gold.text = "Gold: " + playerData.gold;
             if (playerData.food < 6)
             {
                 Hunger.color = Color.red;
@@ -63,6 +67,16 @@ namespace LoL
             {
                 Energy.color = Color.black;
             }
+        }
+
+        public void EnableTrading()
+        {
+            Trading.SetActive(true);
+        }
+
+        public void DisableTrading()
+        {
+            Trading.SetActive(false);
         }
 
         public string determineRegion(int region)

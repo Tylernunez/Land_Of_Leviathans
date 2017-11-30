@@ -23,7 +23,7 @@ namespace LoL
         public int health;
         public int food;
         public int energy;
-
+        public int gold;
 
         [HideInInspector]
         public InventoryManager inventoryManager;
@@ -33,8 +33,9 @@ namespace LoL
         {
             inputhandler = this.GetComponent<GridInput>();
             health = 100;
-            food = 10;
+            food = 20;
             energy = 50;
+            gold = 100;
             //Initialize Inventory
             //Retrieve character stats
 
